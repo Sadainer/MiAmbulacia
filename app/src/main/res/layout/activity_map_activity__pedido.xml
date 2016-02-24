@@ -23,7 +23,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pedir ambulanci"
+        android:text="Pedir ambulancia"
         android:theme="@style/ButtonNormal"
         android:background="@drawable/selector_boton_normal"
         android:id="@+id/butPedirAmbulancia"
