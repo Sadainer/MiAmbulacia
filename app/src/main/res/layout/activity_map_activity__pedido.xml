@@ -1,148 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.admin_sena.miambulacia.EmergenciaActivity">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:weightSum="5"
+
+    tools:context="com.example.admin_sena.miambulacia.MapActivity_Pedido">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:id="@+id/map"
-        tools:context="com.example.admin_sena.miambulacia.MapActivity_Pedido"
+        android:layout_weight="3"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/textView4" />
+        android:layout_alignParentStart="true" />
 
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pedir ambulancia"
-        android:theme="@style/ButtonNormal"
-        android:background="@drawable/selector_boton_normal"
-        android:id="@+id/butPedirAmbulancia"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/relativeLayout"
-        android:paddingLeft="20dp"
-        android:layout_above="@+id/butPedirAmbulancia"
-        android:layout_toEndOf="@+id/relativeLayout2">
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/map"
+        android:layout_weight="2"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin">
 
-        <RadioGroup
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/textView3">
+            android:text="Pedir ambulancia"
+            android:theme="@style/ButtonNormal"
+            android:background="@drawable/selector_boton_normal"
+            android:id="@+id/butPedirAmbulancia"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
 
-            <RadioButton
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/relativeLayout"
+            android:paddingLeft="20dp"
+            android:layout_alignTop="@+id/relativeLayout2"
+            android:layout_toEndOf="@+id/relativeLayout2">
+
+            <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1"
-                android:id="@+id/radPaciente1"
-                android:checked="true" />
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textView3">
 
-            <RadioButton
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:id="@+id/radPaciente1"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:id="@+id/radPaciente2"
+                    android:checked="false" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3"
+                    android:id="@+id/radPaciente3"
+                    android:checked="false" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Multiple"
+                    android:id="@+id/radPacienteMultiple"
+                    android:checked="false" />
+            </RadioGroup>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2"
-                android:id="@+id/radPaciente2"
-                android:checked="false" />
+                android:text="Número de personas"
+                android:id="@+id/textView3"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true" />
+        </RelativeLayout>
 
-            <RadioButton
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/relativeLayout2"
+            android:layout_below="@+id/edtDireccion"
+            android:layout_alignParentStart="true">
+
+            <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="3"
-                android:id="@+id/radPaciente3"
-                android:checked="false" />
+                android:id="@+id/radioGroup"
+                android:layout_below="@+id/textView2"
+                android:layout_alignParentStart="true">
 
-            <RadioButton
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Accidente de transito"
+                    android:id="@+id/radAccidente"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cardiorespiratorio"
+                    android:id="@+id/radCardioRespiratorio"
+                    android:checked="false" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Otro"
+                    android:id="@+id/radOtro"
+                    android:checked="false" />
+            </RadioGroup>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Multiple"
-                android:id="@+id/radPacienteMultiple"
-                android:checked="false" />
-        </RadioGroup>
+                android:text="Tipo de emergencia"
+                android:id="@+id/textView2"
+                android:layout_alignParentStart="true" />
+        </RelativeLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Número de personas"
-            android:id="@+id/textView3"
+            android:text="Mi Ubicación"
+            android:id="@+id/textView4"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/edtDireccion"
+            android:layout_below="@+id/textView4"
             android:layout_alignParentEnd="true"
             android:layout_alignParentStart="true" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/relativeLayout2"
-        android:layout_alignTop="@+id/relativeLayout"
-        android:layout_alignParentStart="true">
-
-        <RadioGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/radioGroup"
-            android:layout_below="@+id/textView2"
-            android:layout_alignParentStart="true">
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Accidente de transito"
-                android:id="@+id/radAccidente"
-                android:checked="true" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cardiorespiratorio"
-                android:id="@+id/radCardioRespiratorio"
-                android:checked="false" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Otro"
-                android:id="@+id/radOtro"
-                android:checked="false" />
-        </RadioGroup>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tipo de emergencia"
-            android:id="@+id/textView2"
-            android:layout_alignParentStart="true" />
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Mi Ubicación"
-        android:id="@+id/textView4"
-        android:layout_above="@+id/editText"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:layout_above="@+id/relativeLayout"
-        android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/relativeLayout" />
-
-</RelativeLayout>
+</LinearLayout>
 
 
 
