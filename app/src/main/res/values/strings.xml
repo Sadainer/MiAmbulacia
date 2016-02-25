@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Mi Ambulacia</string>
-    <string name="title_activity_map_activity__pedido">Map</string>
+    <string name="title_activity_map_activity__pedido">Solicitud de ambulancia</string>
     <string name="title_activity_maps_activity__seguimiento">Map</string>
 </resources>
