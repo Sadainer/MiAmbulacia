@@ -34,11 +34,11 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_activity__pedido);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);  //
-        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);        //declarar tipo de mapa
-        mapFragment.getMapAsync(this);
+      //  SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+      //          .findFragmentById(R.id.map);
+       // locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);  //
+    //    mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);        //declarar tipo de mapa
+     //   mapFragment.getMapAsync(this);
 
         Button btnEnviarAlerta = (Button)findViewById(R.id.butPedirAmbulancia);
     btnEnviarAlerta.setOnClickListener(new View.OnClickListener() {
@@ -56,12 +56,12 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        //mMap = googleMap;
      //   mMap.setMyLocationEnabled(true);
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Mi Ubicación"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    //    LatLng sydney = new LatLng(-34, 151);
+      //  mMap.addMarker(new MarkerOptions().position(sydney).title("Mi Ubicación"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
     }
 }

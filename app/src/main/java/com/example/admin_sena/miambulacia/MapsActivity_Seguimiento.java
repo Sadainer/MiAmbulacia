@@ -19,9 +19,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_activity__seguimiento);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+  //              .findFragmentById(R.id.map);
+    //    mapFragment.getMapAsync(this);
     }
 
 
@@ -39,8 +39,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+     //   LatLng sydney = new LatLng(-34, 151);
+       // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+       // mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }
