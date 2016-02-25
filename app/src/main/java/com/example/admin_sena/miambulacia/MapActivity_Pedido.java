@@ -9,6 +9,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -46,9 +47,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private LocationManager locationMangaer = null;
     //Listener de ubicacion
     private LocationListener locationListener = null;
-//    //Variable para registrar lineas entre puntos
-//    PolylineOptions lineas = new PolylineOptions();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +59,9 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-//        lineas.width(4);
-//        lineas.color(Color.RED);
-
 
         locationListener = new MiUbicacion();
-
         locationMangaer = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -76,10 +69,9 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 return;
             }
         }
-
         //Configuramos el listener para que verifique la ubicaciones cada 10000 milisegundos y 20 metros, si cumple las dos condiciones
         //se dispara el metodo
-        locationMangaer.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 20, locationListener);
+        locationMangaer.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 100, locationListener);
 
         mapFragment.getMapAsync(this);
         btnEnviarAlerta = (Button)findViewById(R.id.butPedirAmbulancia);
@@ -92,8 +84,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
              startActivity(intent);
              }
          });
-
-
     }
 
 
@@ -115,25 +105,17 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         //Si la posicion es diferente de null creamos un marcados con el titulo Posicion inicial
         if (posicionActual != null) {
-            String myLocation = "Latitude = " + posicionActual.getLatitude() + " Longitude = " + posicionActual.getLongitude();
-//            txtLat2.setText(myLocation);
+
             CrearMarcador(posicionActual,"Tu Ubicación");
 
-
-
         }
-        //mMap = googleMap;
-     //   mMap.setMyLocationEnabled(true);
-        // Add a marker in Sydney and move the camera
-    //    LatLng sydney = new LatLng(-34, 151);
-      //  mMap.addMarker(new MarkerOptions().position(sydney).title("Mi Ubicación"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
     }
 
     //metodo para crear marcadores
     public void CrearMarcador(Location location, String Titulo)
     {
+        mMap.clear();
         mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
                 .title(Titulo));
@@ -145,14 +127,13 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         geocoder = new Geocoder(this, Locale.getDefault());
 
         try {
-            addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
             edtDireccion.setText(addresses.get(0).getAddressLine(0));
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        lineas.add(new LatLng(location.getLatitude(), location.getLongitude()));
-//        mMap.addPolyline(lineas);
+//
     }
 
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
@@ -163,15 +144,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         @Override
         public void onLocationChanged(Location location) {
 
-            String myLocation = "Latitude = " + location.getLatitude() + " Longitude = " + location.getLongitude();
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String currentDateandTime = sdf.format(new Date());
-
-            CrearMarcador(location, "Fecha: " + currentDateandTime);
-
-//            txtLat.setText(myLocation);
-            /*Toast.makeText(getApplicationContext(), myLocation, Toast.LENGTH_SHORT).show();*/
+            CrearMarcador(location, "Tu Ubicación");
         }
 
         @Override
