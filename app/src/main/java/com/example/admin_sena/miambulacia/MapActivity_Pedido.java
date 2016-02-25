@@ -65,7 +65,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 //        lineas.color(Color.RED);
 
 
-//        locationListener = new MiUbicacion();
+        locationListener = new MiUbicacion();
 
         locationMangaer = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
 
@@ -77,9 +77,9 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             }
         }
 
-//        //Configuramos el listener para que verifique la ubicaciones cada 10000 milisegundos y 20 metros, si cumple las dos condiciones
-//        //se dispara el metodo
-//        locationMangaer.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 20, locationListener);
+        //Configuramos el listener para que verifique la ubicaciones cada 10000 milisegundos y 20 metros, si cumple las dos condiciones
+        //se dispara el metodo
+        locationMangaer.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 20, locationListener);
 
         mapFragment.getMapAsync(this);
         btnEnviarAlerta = (Button)findViewById(R.id.butPedirAmbulancia);
@@ -117,19 +117,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         if (posicionActual != null) {
             String myLocation = "Latitude = " + posicionActual.getLatitude() + " Longitude = " + posicionActual.getLongitude();
 //            txtLat2.setText(myLocation);
-            CrearMarcador(posicionActual,"Posicion Inicial");
+            CrearMarcador(posicionActual,"Tu Ubicación");
 
-            Geocoder geocoder;
-            List<Address> addresses;
-            geocoder = new Geocoder(this, Locale.getDefault());
-
-            try {
-                addresses = geocoder.getFromLocation(posicionActual.getLatitude(),posicionActual.getLongitude(),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-                edtDireccion.setText(addresses.get(0).getAddressLine(0));
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
 
         }
@@ -150,6 +139,18 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 .title(Titulo));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15.0f));
+
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            edtDireccion.setText(addresses.get(0).getAddressLine(0));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //        lineas.add(new LatLng(location.getLatitude(), location.getLongitude()));
 //        mMap.addPolyline(lineas);
     }
