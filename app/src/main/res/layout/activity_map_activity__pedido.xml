@@ -33,7 +33,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pedir ambulancia"
+            android:text="@string/st_btn_Pedir_ambulancia"
             android:theme="@style/ButtonNormal"
             android:background="@drawable/selector_boton_normal"
             android:id="@+id/butPedirAmbulancia"
@@ -80,7 +80,7 @@
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Multiple"
+                    android:text="@string/st_Multiple"
                     android:id="@+id/radPacienteMultiple"
                     android:checked="false" />
             </RadioGroup>
@@ -113,21 +113,28 @@
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Accidente de transito"
+                    android:text="@string/st_Accidente_transito"
                     android:id="@+id/radAccidente"
                     android:checked="true" />
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cardiorespiratorio"
+                    android:text="@string/st_cardiorespiratorio"
                     android:id="@+id/radCardioRespiratorio"
                     android:checked="false" />
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Otro"
+                    android:text="@string/st_quemaduras"
+                    android:id="@+id/radQuemaduras"
+                    android:checked="false" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/st_otro"
                     android:id="@+id/radOtro"
                     android:checked="false" />
             </RadioGroup>

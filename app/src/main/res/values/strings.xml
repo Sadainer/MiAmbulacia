@@ -10,4 +10,9 @@
     <string name="st_regular">Regular</string>
     <string name="st_malo">Malo</string>
     <string name="st_pesimo">Pesimo</string>
+    <string name="st_Accidente_transito">Accidente de transito</string>
+    <string name="st_quemaduras">Quemaduras</string>
+    <string name="st_cardiorespiratorio">Cardiorespiratorio</string>
+    <string name="st_otro">Otro</string>
+    <string name="st_Multiple">Multiple</string>
 </resources>
