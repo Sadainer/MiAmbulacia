@@ -19,25 +19,8 @@ public class DialogoCalificarServicio extends DialogFragment{
         AlertDialog.Builder builder =
                 new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-
         builder.setView(inflater.inflate(R.layout.activity_calificacion_servicio,null));
-    builder.setTitle("Desea calificar servicio")
-            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-
-                }
-            })
-            .setPositiveButton("Enviar Calificacion", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-
-                }
-            });
+    builder.setTitle("Desea calificar servicio");
         return builder.create();
     }
-
-
 }
