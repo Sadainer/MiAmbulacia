@@ -45,25 +45,25 @@ public class MainActivity extends AppCompatActivity {
                             Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS );
                             startActivity(myIntent);
                         }
-                    }) //
-                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // TODO
-                            dialog.dismiss();
-                            MainActivity.this.finish();
-                        }
-                    });
+                    }); //
+//                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int id) {
+//                            // TODO
+//                            dialog.dismiss();
+//                            MainActivity.this.finish();
+//                        }
+//                    });
             builder.show();
 //
         }
-//           timer.schedule(new TimerTask() {
-//           @Override
-//           public void run() {
-//               Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
-//               startActivity(IntEmergencia);
-//               MainActivity.this.finish();
-//           }
-//       }, 2000);
+           timer.schedule(new TimerTask() {
+           @Override
+           public void run() {
+               Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
+               startActivity(IntEmergencia);
+               MainActivity.this.finish();
+           }
+       }, 2000);
     }
 
 

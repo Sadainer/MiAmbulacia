@@ -71,7 +71,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         }
         //Configuramos el listener para que verifique la ubicaciones cada 10000 milisegundos y 20 metros, si cumple las dos condiciones
         //se dispara el metodo
-        locationMangaer.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 100, locationListener);
+        locationMangaer.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 10, locationListener);
 
         mapFragment.getMapAsync(this);
         btnEnviarAlerta = (Button)findViewById(R.id.butPedirAmbulancia);
@@ -123,12 +123,14 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15.0f));
 
         Geocoder geocoder;
-        List<Address> addresses;
+        List<Address> Direccion;
         geocoder = new Geocoder(this, Locale.getDefault());
 
         try {
-            addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
-            edtDireccion.setText(addresses.get(0).getAddressLine(0));
+            Direccion = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+            if (edtDireccion.getText().equals("")){
+                edtDireccion.setText(Direccion.get(0).getAddressLine(0));
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
