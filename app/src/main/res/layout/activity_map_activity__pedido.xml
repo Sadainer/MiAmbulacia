@@ -88,7 +88,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Número de personas"
+                android:text="@string/st_numero_pacientes"
                 android:id="@+id/textView3"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentStart="true" />
@@ -142,7 +142,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tipo de emergencia"
+                android:text="@string/st_tipo_emergencia"
                 android:id="@+id/textView2"
                 android:layout_alignParentStart="true" />
         </RelativeLayout>

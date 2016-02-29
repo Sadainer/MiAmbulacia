@@ -15,4 +15,6 @@
     <string name="st_cardiorespiratorio">Cardiorespiratorio</string>
     <string name="st_otro">Otro</string>
     <string name="st_Multiple">Multiple</string>
+    <string name="st_tipo_emergencia">Tipo de emergencia</string>
+    <string name="st_numero_pacientes">Numero de pacientes</string>
 </resources>
