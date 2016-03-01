@@ -53,7 +53,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_activity__pedido);
 
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -73,6 +72,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         //se dispara el metodo
         locationMangaer.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 10, locationListener);
 
+        locationMangaer.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 20, locationListener);
         mapFragment.getMapAsync(this);
         btnEnviarAlerta = (Button)findViewById(R.id.butPedirAmbulancia);
         edtDireccion= (EditText)findViewById(R.id.edtDireccion);

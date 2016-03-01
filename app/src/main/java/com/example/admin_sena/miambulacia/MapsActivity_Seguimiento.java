@@ -1,5 +1,6 @@
 package com.example.admin_sena.miambulacia;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -30,9 +31,11 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =
-                        new Intent(MapsActivity_Seguimiento.this ,CalificacionServicioActivity.class);
-                startActivity(intent);
+
+               android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                DialogoCalificarServicio dialogoCalificarServicio = new DialogoCalificarServicio();
+                dialogoCalificarServicio.show(fragmentManager, "tagCalificarServicio");
+
 
             }
         });

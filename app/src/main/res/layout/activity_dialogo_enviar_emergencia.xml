@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/txt_info_pedido"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.35"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.10">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editText"
+                android:text="Algun otro comentario" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_grabar_audio"
+                android:background="@drawable/boton_voz"
+        android:src="@drawable/icon_voz"
+                android:layout_margin="@dimen/activity_horizontal_margin" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/activity_horizontal_margin">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Si, Enviar"
+                android:id="@+id/button3"
+                android:theme="@style/ButtonNormal"
+                android:background="@drawable/selector_boton_normal"
+                android:padding="@dimen/activity_vertical_margin"
+android:layout_margin="@dimen/activity_vertical_margin"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="No, Salir"
+                android:id="@+id/btn_no_salir"
+                android:theme="@style/ButtonNormal"
+                android:background="@drawable/selector_boton_normal"
+            android:padding="@dimen/activity_vertical_margin"
+android:layout_margin="@dimen/activity_vertical_margin"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

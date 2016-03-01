@@ -44,8 +44,10 @@
             android:label="@string/title_activity_map_activity__pedido" >
         </activity>
         <activity
+
             android:name=".MapsActivity_Seguimiento"
             android:label="@string/title_activity_maps_activity__seguimiento" >
+
         </activity>
         <activity android:name=".CalificacionServicioActivity" >
         </activity>
