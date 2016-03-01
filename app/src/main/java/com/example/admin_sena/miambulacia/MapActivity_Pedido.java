@@ -64,7 +64,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
                 return;
             }
         }
@@ -128,9 +127,13 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         try {
             Direccion = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
-            if (edtDireccion.getText().equals("")){
-                edtDireccion.setText(Direccion.get(0).getAddressLine(0));
-            }
+           // if (edtDireccion.getText().equals("")){
+                String Direccion2 = Direccion.get(0).getAddressLine(0);
+                String[] separated = Direccion2.split("-");
+
+                //edtDireccion.setText(Direccion.get(0).getAddressLine(0));
+                edtDireccion.setText(separated[0] + "-");
+            //}
 
         } catch (IOException e) {
             e.printStackTrace();
