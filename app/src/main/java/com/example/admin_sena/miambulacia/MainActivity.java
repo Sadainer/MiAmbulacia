@@ -71,12 +71,12 @@ int requestcode = 1;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-  if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-  {
-      Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
-      startActivity(IntEmergencia);
-      MainActivity.this.finish();
-  }
+      if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+      {
+          Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
+          startActivity(IntEmergencia);
+          MainActivity.this.finish();
+      }
 
         if (requestCode == requestCode) {
             // Make sure the request was successful
