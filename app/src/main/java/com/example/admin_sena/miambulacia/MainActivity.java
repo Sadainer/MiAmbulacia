@@ -7,6 +7,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
 import android.provider.Settings;
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     Timer timer = new Timer();
     LocationManager locManager;
-
+int requestcode = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id) {
                             // TODO
                             Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS );
-                            startActivity(myIntent);
+                            startActivityForResult(myIntent,requestcode);
                         }
                     }); //
 //                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
             builder.show();
 //
         }
+/*
            timer.schedule(new TimerTask() {
            @Override
            public void run() {
@@ -64,7 +66,33 @@ public class MainActivity extends AppCompatActivity {
                MainActivity.this.finish();
            }
        }, 2000);
+  */
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+  if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+  {
+      Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
+      startActivity(IntEmergencia);
+      MainActivity.this.finish();
+  }
+
+        if (requestCode == requestCode) {
+            // Make sure the request was successful
+
+            //status = locManager.getGpsStatus(GpsStatus);
+            if (resultCode != RESULT_OK ) {
+/*
+                        Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
+                        startActivity(IntEmergencia);
+                        MainActivity.this.finish();
+*/
+
+            }
+        }
+    }
+
 
 
 }
