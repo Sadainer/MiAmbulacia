@@ -56,6 +56,10 @@ int requestcode = 1;
 //                    });
             builder.show();
 //
+        }else {
+            Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
+            startActivity(IntEmergencia);
+            MainActivity.this.finish();
         }
 /*
            timer.schedule(new TimerTask() {

@@ -132,7 +132,9 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 String[] separated = Direccion2.split("-");
 
                 //edtDireccion.setText(Direccion.get(0).getAddressLine(0));
-                edtDireccion.setText(separated[0] + "-");
+            edtDireccion.setText(separated[0] + "-");
+            int distancia = separated[0].length() +1;
+            edtDireccion.setSelection(distancia);
             //}
 
         } catch (IOException e) {
