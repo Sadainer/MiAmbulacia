@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
+import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,12 +32,14 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -47,6 +51,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private Location posicionActual = null;
     //Variable para guardar al mejor proveedor para obtener la ubicacion
     String MejorProveedor=null;
+    private static String DIR_URL = "http://190.109.185.138:8013/api/Ubicacionambulancias";
     private LocationManager locationMangaer = null;
     //Listener de ubicacion
     private LocationListener locationListener = null;
@@ -54,6 +59,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private static int TIEMPO_ACTUALIZACION=10;
     //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
     private static int RADIO_ACTUALIZACION=1;
+    final Gson gsson = new Gson();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,21 +115,21 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                return;
-            }
-        }
-        //Despues de validar los permisos obtenemos la ultima ubicacion registrada del dispositivo
-        posicionActual = locationMangaer.getLastKnownLocation(MejorProveedor);
-
-        //Si la posicion es diferente de null creamos un marcados con el titulo Posicion inicial
-        if (posicionActual != null) {
-
-            CrearMarcador(posicionActual,"Tu Ubicación");
-
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//                return;
+//            }
+//        }
+//        //Despues de validar los permisos obtenemos la ultima ubicacion registrada del dispositivo
+//        posicionActual = locationMangaer.getLastKnownLocation(MejorProveedor);
+//
+//        //Si la posicion es diferente de null creamos un marcados con el titulo Posicion inicial
+//        if (posicionActual != null) {
+//
+//            CrearMarcador(posicionActual,"Tu Ubicación");
+//
+//        }
 
     }
 
@@ -159,6 +165,28 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 //
     }
 
+    //Metodo para enviar Ubicacion al servidor
+    private void EnviarUbicacion(Location location){
+
+        UbicacionPacienteDto ubicacion = new UbicacionPacienteDto();
+        ubicacion.setIdPaciente("Sadainer");
+        ubicacion.setLatitud(location.getLatitude());
+        ubicacion.setLongitud(location.getLongitude());
+
+        PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion),getApplicationContext());
+        System.out.println(gsson.toJson(ubicacion));
+        try {
+            EnviarUbicacion.execute(DIR_URL).get();
+            System.out.println("Ok");
+        } catch (InterruptedException e) {
+            System.out.println("Error i");
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            System.out.println("Error e");
+            e.printStackTrace();
+        }
+
+    }
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
     //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
     private class MiUbicacion implements LocationListener
@@ -166,6 +194,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         @Override
         public void onLocationChanged(Location location) {
+
 
             CrearMarcador(location, "Tu Ubicación");
         }
