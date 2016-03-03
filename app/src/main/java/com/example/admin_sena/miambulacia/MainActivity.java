@@ -23,7 +23,6 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
 
-    Timer timer = new Timer();
     LocationManager locManager;
     int requestcode = 1;
     @Override
@@ -54,16 +53,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(IntEmergencia);
             MainActivity.this.finish();
         }
-/*
-           timer.schedule(new TimerTask() {
-           @Override
-           public void run() {
-               Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
-               startActivity(IntEmergencia);
-               MainActivity.this.finish();
-           }
-       }, 2000);
-  */
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
