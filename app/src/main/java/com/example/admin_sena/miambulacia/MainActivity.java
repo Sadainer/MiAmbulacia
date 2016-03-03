@@ -7,6 +7,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
@@ -23,20 +24,19 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
 
-    Timer timer = new Timer();
-    LocationManager locManager;
+//    Timer timer = new Timer();
+    LocationManager locationMangaer;
     int requestcode = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 
-        locManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        locationMangaer = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (!locationMangaer.isProviderEnabled(LocationManager.GPS_PROVIDER))
         {
-
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("GPS Desactivado") //
                     .setMessage("Necesita activar GPS para mejorar su ubicación") //
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-      if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+      if (locationMangaer.isProviderEnabled(LocationManager.GPS_PROVIDER))
       {
           Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
           startActivity(IntEmergencia);
