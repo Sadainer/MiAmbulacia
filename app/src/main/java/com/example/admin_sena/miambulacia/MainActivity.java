@@ -23,7 +23,7 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
 
-    LocationManager locManager;
+    LocationManager locationMangaer;
     int requestcode = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 
-        locManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationMangaer = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        if (!locationMangaer.isProviderEnabled(LocationManager.GPS_PROVIDER))
         {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-      if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+      if (locationMangaer.isProviderEnabled(LocationManager.GPS_PROVIDER))
       {
           Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
           startActivity(IntEmergencia);
