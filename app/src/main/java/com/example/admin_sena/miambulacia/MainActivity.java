@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     Timer timer = new Timer();
     LocationManager locManager;
-int requestcode = 1;
+    int requestcode = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,13 +47,6 @@ int requestcode = 1;
                             startActivityForResult(myIntent,requestcode);
                         }
                     }); //
-//                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int id) {
-//                            // TODO
-//                            dialog.dismiss();
-//                            MainActivity.this.finish();
-//                        }
-//                    });
             builder.show();
 //
         }else {
@@ -79,24 +72,7 @@ int requestcode = 1;
       {
           Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
           startActivity(IntEmergencia);
-          MainActivity.this.finish();
       }
-
-        if (requestCode == requestCode) {
-            // Make sure the request was successful
-
-            //status = locManager.getGpsStatus(GpsStatus);
-            if (resultCode != RESULT_OK ) {
-/*
-                        Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
-                        startActivity(IntEmergencia);
-                        MainActivity.this.finish();
-*/
-
-            }
-        }
+        MainActivity.this.finish();
     }
-
-
-
 }

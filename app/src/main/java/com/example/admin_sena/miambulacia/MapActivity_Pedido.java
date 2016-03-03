@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -44,9 +45,15 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     //Variable para guardar la posicion inicial del equipo
     private Location posicionActual = null;
+    //Variable para guardar al mejor proveedor para obtener la ubicacion
+    String MejorProveedor=null;
     private LocationManager locationMangaer = null;
     //Listener de ubicacion
     private LocationListener locationListener = null;
+    //Variable que controla el tiempo en que se actualiza la ubicacion en segundos
+    private static int TIEMPO_ACTUALIZACION=10;
+    //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
+    private static int RADIO_ACTUALIZACION=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +65,16 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
-        locationListener = new MiUbicacion();
         locationMangaer = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
+
+        Criteria req = new Criteria();
+        req.setAccuracy(Criteria.ACCURACY_FINE);
+        req.setAltitudeRequired(true);
+
+        //Mejor proveedor por criterio
+        MejorProveedor = locationMangaer.getBestProvider(req, false);
+
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -69,10 +83,12 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         }
         //Configuramos el listener para que verifique la ubicaciones cada 10000 milisegundos y 20 metros, si cumple las dos condiciones
         //se dispara el metodo
-        locationMangaer.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 10, locationListener);
+        locationListener = new MiUbicacion();
+        locationMangaer.requestLocationUpdates(MejorProveedor, TIEMPO_ACTUALIZACION, RADIO_ACTUALIZACION, locationListener);
 
-        locationMangaer.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 20, locationListener);
+
         mapFragment.getMapAsync(this);
+
         btnEnviarAlerta = (Button)findViewById(R.id.butPedirAmbulancia);
         edtDireccion= (EditText)findViewById(R.id.edtDireccion);
         btnEnviarAlerta.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +116,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             }
         }
         //Despues de validar los permisos obtenemos la ultima ubicacion registrada del dispositivo
-        posicionActual = locationMangaer.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        posicionActual = locationMangaer.getLastKnownLocation(MejorProveedor);
 
         //Si la posicion es diferente de null creamos un marcados con el titulo Posicion inicial
         if (posicionActual != null) {
