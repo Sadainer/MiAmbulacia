@@ -65,7 +65,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_activity__pedido);
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -80,8 +79,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         //Mejor proveedor por criterio
         MejorProveedor = locationMangaer.getBestProvider(req, false);
 
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
@@ -92,14 +89,16 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         locationListener = new MiUbicacion();
         locationMangaer.requestLocationUpdates(MejorProveedor, TIEMPO_ACTUALIZACION, RADIO_ACTUALIZACION, locationListener);
 
-
         mapFragment.getMapAsync(this);
 
         btnEnviarAlerta = (Button)findViewById(R.id.butPedirAmbulancia);
         edtDireccion= (EditText)findViewById(R.id.edtDireccion);
+        final Location posicionActual = locationMangaer.getLastKnownLocation(MejorProveedor);
         btnEnviarAlerta.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View v) {
+             EnviarUbicacion(posicionActual);
+        //EnviarUbicacion(posicionActual); // Enviar posicion al servidor
              Intent intent =
                      new Intent(MapActivity_Pedido.this, MapsActivity_Seguimiento.class);
              startActivity(intent);
@@ -107,10 +106,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
          });
     }
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
 
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
@@ -157,12 +154,11 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             edtDireccion.setText(separated[0] + "-");
             int distancia = separated[0].length() +1;
             edtDireccion.setSelection(distancia);
-            //}
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-//
+
     }
 
     //Metodo para enviar Ubicacion al servidor
@@ -172,7 +168,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         ubicacion.setIdPaciente("Sadainer");
         ubicacion.setLatitud(location.getLatitude());
         ubicacion.setLongitud(location.getLongitude());
-
+/*
         PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion),getApplicationContext());
         System.out.println(gsson.toJson(ubicacion));
         try {
@@ -185,35 +181,26 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             System.out.println("Error e");
             e.printStackTrace();
         }
-
+  */
     }
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
     //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
     private class MiUbicacion implements LocationListener
     {
-
         @Override
         public void onLocationChanged(Location location) {
 
-
             CrearMarcador(location, "Tu Ubicación");
         }
-
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-
         }
-
         @Override
         public void onProviderEnabled(String provider) {
-
         }
-
         @Override
         public void onProviderDisabled(String provider) {
 
         }
-
-
     }
 }
