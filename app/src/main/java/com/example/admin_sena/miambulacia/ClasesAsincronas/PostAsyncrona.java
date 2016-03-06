@@ -15,7 +15,7 @@ import java.net.URL;
  * Created by Sadainer Hernandez on 09/03/2015.
  * Clase para consumir servicios rest mediante el metodo GET
  */
-public class PostAsyncrona extends AsyncTask<String, Void, Void> {
+public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
     private String mData = null;
     URL url;
@@ -34,7 +34,8 @@ public class PostAsyncrona extends AsyncTask<String, Void, Void> {
     //Variable ruta se guarda la URI del servicio GET a consumir
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected String doInBackground(String... params) {
+        String mensajeRespuesta = null;
         try {
 
 
@@ -49,22 +50,18 @@ public class PostAsyncrona extends AsyncTask<String, Void, Void> {
             dStream.writeBytes(mData);
             dStream.flush();
             dStream.close();
-            int responseCode = connection.getResponseCode();
+            mensajeRespuesta = connection.getResponseMessage();
 
-            final StringBuilder output = new StringBuilder("Request URL " + url);
-            output.append(System.getProperty("line.separator") + "Request Parameters " + mData);
-            output.append(System.getProperty("line.separator") + "Response Code " + responseCode);
-            output.append(System.getProperty("line.separator") + "Type " + "POST");
+
             BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String line = "";
             StringBuilder responseOutput = new StringBuilder();
-            System.out.println("output===============" + br);
+
             while((line = br.readLine()) != null ) {
                 responseOutput.append(line);
             }
             br.close();
-
-            output.append(System.getProperty("line.separator") + "Response " + System.getProperty("line.separator") + System.getProperty("line.separator") + responseOutput.toString());
+            System.out.println("output===============" + mensajeRespuesta);
 
         } catch (MalformedURLException e) {
             System.out.println("MalformedURLException");
@@ -75,10 +72,10 @@ public class PostAsyncrona extends AsyncTask<String, Void, Void> {
             System.out.println("IOException");
             e.printStackTrace();
         }
-        return null;
+        return mensajeRespuesta;
     }
 
-    public void onPostExecute(Void result) {
+    public void onPostExecute(String result) {
         super.onPostExecute(result);
         //Se retorna un string que contiene un JSON con los datos obtenidos
     }
