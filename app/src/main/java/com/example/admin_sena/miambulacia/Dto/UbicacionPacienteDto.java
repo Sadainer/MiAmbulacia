@@ -11,6 +11,16 @@ public class UbicacionPacienteDto {
     private Double Longitud;
     private String TipoEmergencia;
     private int NumeroPacientes;
+    private String Direccion;
+
+    public String getDireccion() {
+
+        return Direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        Direccion = direccion;
+    }
 
     public String getTipoEmergencia() {
         return TipoEmergencia;

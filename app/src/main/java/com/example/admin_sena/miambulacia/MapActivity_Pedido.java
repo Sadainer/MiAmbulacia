@@ -19,6 +19,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
@@ -46,19 +48,24 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private GoogleMap mMap;
     Button btnEnviarAlerta;
     EditText edtDireccion;
+    RadioGroup rGrpTipoEmergencia;
+    RadioGroup rGrpNumPacientes;
+
+
+    UbicacionPacienteDto ubicacionPaciente;
 
     //Variable para guardar la posicion inicial del equipo
     private Location posicionActual = null;
     //Variable para guardar al mejor proveedor para obtener la ubicacion
-    String MejorProveedor=null;
-    private static String DIR_URL = "http://190.109.185.138:8013/api/Ubicacionambulancias";
+    String MejorProveedor = null;
+    private static String DIR_URL = "http://190.109.185.138:8013/api/";
     private LocationManager locationMangaer = null;
     //Listener de ubicacion
     private LocationListener locationListener = null;
     //Variable que controla el tiempo en que se actualiza la ubicacion en segundos
-    private static int TIEMPO_ACTUALIZACION=10;
+    private static int TIEMPO_ACTUALIZACION = 10;
     //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
-    private static int RADIO_ACTUALIZACION=1;
+    private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
 
     @Override
@@ -72,12 +79,15 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         locationMangaer = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
 
+
         Criteria req = new Criteria();
         req.setAccuracy(Criteria.ACCURACY_FINE);
         req.setAltitudeRequired(true);
 
         //Mejor proveedor por criterio
         MejorProveedor = locationMangaer.getBestProvider(req, false);
+
+        ubicacionPaciente = new UbicacionPacienteDto();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -91,19 +101,67 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         mapFragment.getMapAsync(this);
 
-        btnEnviarAlerta = (Button)findViewById(R.id.butPedirAmbulancia);
-        edtDireccion= (EditText)findViewById(R.id.edtDireccion);
-        final Location posicionActual = locationMangaer.getLastKnownLocation(MejorProveedor);
+
+        btnEnviarAlerta = (Button) findViewById(R.id.butPedirAmbulancia);
+        edtDireccion = (EditText) findViewById(R.id.edtDireccion);
+        rGrpNumPacientes = (RadioGroup) findViewById(R.id.grpNumPaciente);
+        rGrpTipoEmergencia = (RadioGroup) findViewById(R.id.grpTipEmergencia);
+
+        rGrpNumPacientes.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.radPaciente1) {
+                    ubicacionPaciente.setNumeroPacientes(1);
+                } else if (checkedId == R.id.radPaciente2) {
+                    ubicacionPaciente.setNumeroPacientes(2);
+                } else if (checkedId == R.id.radPaciente3) {
+                    ubicacionPaciente.setNumeroPacientes(3);
+                } else if (checkedId == R.id.radPacienteMultiple) {
+                    ubicacionPaciente.setNumeroPacientes(0);
+                }
+            }
+        });
+
+        rGrpTipoEmergencia.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.radAccidente) {
+                    ubicacionPaciente.setTipoEmergencia("Accidente");
+                } else if (checkedId == R.id.radCardioRespiratorio) {
+                    ubicacionPaciente.setTipoEmergencia("Cardiorespiratorio");
+                } else if (checkedId == R.id.radQuemaduras) {
+                    ubicacionPaciente.setTipoEmergencia("Quemaduras");
+                } else if (checkedId == R.id.radOtro) {
+                    ubicacionPaciente.setTipoEmergencia("Otro");
+                }
+            }
+        });
+
+
+        // Boton para envio de alerta a la ambulancia
         btnEnviarAlerta.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View v) {
-             EnviarUbicacion(posicionActual);
-        //EnviarUbicacion(posicionActual); // Enviar posicion al servidor
-             Intent intent =
-                     new Intent(MapActivity_Pedido.this, MapsActivity_Seguimiento.class);
-             startActivity(intent);
-             }
-         });
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                }
+                Location posicionActual = locationMangaer.getLastKnownLocation(MejorProveedor);
+
+
+                ubicacionPaciente.setIdPaciente("Sadainer");
+                ubicacionPaciente.setLatitud(posicionActual.getLatitude());
+                ubicacionPaciente.setLongitud(posicionActual.getLongitude());
+                ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
+
+                EnviarUbicacion(ubicacionPaciente);
+                //EnviarUbicacion(posicionActual); // Enviar posicion al servidor
+//             Intent intent =
+//                     new Intent(MapActivity_Pedido.this, MapsActivity_Seguimiento.class);
+//             startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -112,22 +170,19 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//
-//                return;
-//            }
-//        }
-//        //Despues de validar los permisos obtenemos la ultima ubicacion registrada del dispositivo
-//        posicionActual = locationMangaer.getLastKnownLocation(MejorProveedor);
-//
-//        //Si la posicion es diferente de null creamos un marcados con el titulo Posicion inicial
-//        if (posicionActual != null) {
-//
-//            CrearMarcador(posicionActual,"Tu Ubicación");
-//
-//        }
+        boolean network_enabled = locationMangaer.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
+        if (network_enabled) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+            }
+            Location location = locationMangaer.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if(location!=null){
+                CrearMarcador(location, "Tu Ubicación");
+            }
+        }
     }
 
     //metodo para crear marcadores
@@ -162,18 +217,14 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     }
 
     //Metodo para enviar Ubicacion al servidor
-    private void EnviarUbicacion(Location location){
+    private void EnviarUbicacion(UbicacionPacienteDto ubicacion){
 
-        UbicacionPacienteDto ubicacion = new UbicacionPacienteDto();
-        ubicacion.setIdPaciente("Sadainer");
-        ubicacion.setLatitud(location.getLatitude());
-        ubicacion.setLongitud(location.getLongitude());
-/*
+        System.out.println(gsson.toJson(ubicacion));
         PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion),getApplicationContext());
         System.out.println(gsson.toJson(ubicacion));
         try {
-            EnviarUbicacion.execute(DIR_URL).get();
-            System.out.println("Ok");
+            String resultado = EnviarUbicacion.execute(DIR_URL).get();
+            System.out.println(resultado);
         } catch (InterruptedException e) {
             System.out.println("Error i");
             e.printStackTrace();
@@ -181,7 +232,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             System.out.println("Error e");
             e.printStackTrace();
         }
-  */
+
     }
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
     //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion

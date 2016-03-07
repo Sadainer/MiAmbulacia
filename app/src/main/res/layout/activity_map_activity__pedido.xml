@@ -46,11 +46,12 @@
             android:id="@+id/relativeLayout"
             android:paddingLeft="20dp"
             android:paddingTop="10dp"
-            android:layout_alignTop="@+id/relativeLayout2"
             android:layout_toEndOf="@+id/relativeLayout2"
-            android:layout_alignBottom="@+id/relativeLayout2">
+            android:layout_alignBottom="@+id/relativeLayout2"
+            android:layout_below="@+id/linearLayout2">
 
             <RadioGroup
+                android:id="@+id/grpNumPaciente"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
@@ -99,14 +100,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/relativeLayout2"
             android:paddingTop="10dp"
-            android:layout_below="@+id/edtDireccion"
-            android:layout_alignParentStart="true"
-            android:layout_above="@+id/butPedirAmbulancia">
+            android:layout_below="@+id/linearLayout2"
+            android:layout_alignParentStart="true">
 
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/radioGroup"
+                android:id="@+id/grpTipEmergencia"
                 android:layout_below="@+id/textView2"
                 android:layout_alignParentStart="true">
 
@@ -147,22 +147,31 @@
                 android:layout_alignParentStart="true" />
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mi Ubicación"
-            android:id="@+id/textView4"
+            android:id="@+id/linearLayout2"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentEnd="true">
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/edtDireccion"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mi Ubicación"
+                android:id="@+id/textView4"
+                android:layout_alignTop="@+id/edtDireccion"
+                android:layout_alignParentStart="true" />
 
-            android:layout_below="@+id/textView4"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edtDireccion"
+
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/textView4" />
+        </LinearLayout>
     </RelativeLayout>
 
 </LinearLayout>
