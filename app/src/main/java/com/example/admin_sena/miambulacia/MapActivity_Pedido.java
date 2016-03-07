@@ -142,13 +142,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         btnEnviarAlerta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                }
-                Location posicionActual = locationMangaer.getLastKnownLocation(MejorProveedor);
-
 
                 ubicacionPaciente.setIdPaciente("Sadainer");
                 ubicacionPaciente.setLatitud(posicionActual.getLatitude());
@@ -180,6 +173,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             }
             Location location = locationMangaer.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             if(location!=null){
+                posicionActual = location;
                 CrearMarcador(location, "Tu Ubicación");
             }
         }
@@ -223,7 +217,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion),getApplicationContext());
         System.out.println(gsson.toJson(ubicacion));
         try {
-            String resultado = EnviarUbicacion.execute(DIR_URL).get();
+            String resultado = EnviarUbicacion.execute(DIR_URL + "PedidoAmbulancia").get();
             System.out.println(resultado);
         } catch (InterruptedException e) {
             System.out.println("Error i");
@@ -240,7 +234,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     {
         @Override
         public void onLocationChanged(Location location) {
-
+            posicionActual= location;
             CrearMarcador(location, "Tu Ubicación");
         }
         @Override
