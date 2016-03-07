@@ -7,6 +7,26 @@ import java.util.Date;
  */
 public class UbicacionPacienteDto {
     private String IdPaciente;
+    private Double Latitud;
+    private Double Longitud;
+    private String TipoEmergencia;
+    private int NumeroPacientes;
+
+    public String getTipoEmergencia() {
+        return TipoEmergencia;
+    }
+
+    public void setTipoEmergencia(String tipoEmergencia) {
+        TipoEmergencia = tipoEmergencia;
+    }
+
+    public int getNumeroPacientes() {
+        return NumeroPacientes;
+    }
+
+    public void setNumeroPacientes(int numeroPacientes) {
+        NumeroPacientes = numeroPacientes;
+    }
 
     public String getIdPaciente() {
         return IdPaciente;
@@ -32,7 +52,6 @@ public class UbicacionPacienteDto {
         Longitud = longitud;
     }
 
-    private Double Latitud;
-    private Double Longitud;
+
 
 }
