@@ -1,13 +1,13 @@
 package com.example.admin_sena.miambulacia.ClasesAsincronas;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-
-import com.example.admin_sena.miambulacia.AsyncResponse;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -19,22 +19,42 @@ import java.net.URL;
  */
 public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
+    public interface AsyncResponse {
+        void processFinish(String output);
+    }
+
     public AsyncResponse delegate = null;
     private String mData = null;
     URL url;
     HttpURLConnection connection;
     Context cnt;
+    private ProgressDialog prgEnviando;
 
-    public PostAsyncrona(String data, Context context) {
+
+    public PostAsyncrona(String data, Context context, AsyncResponse delegate) {
         mData = data;
         cnt= context;
+        this.delegate = delegate;
+        prgEnviando = new ProgressDialog(context);
     }
     public void execute() {
         // TODO Auto-generated method stub
+
     }
 
 
     //Variable ruta se guarda la URI del servicio GET a consumir
+
+
+    @Override
+    protected void onPreExecute() {
+
+
+        this.prgEnviando.setTitle("MyAmbu");
+        this.prgEnviando.setMessage("Enviando ...");
+        this.prgEnviando.show();
+
+    }
 
     @Override
     protected String doInBackground(String... params) {
@@ -54,21 +74,25 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
             dStream.flush();
             dStream.close();
 
+            //Read
+            StringBuilder sb = null;
+            BufferedReader br = null;
+            //here is the problem
+            int responseCode=connection.getResponseCode();
+            if(responseCode==HttpURLConnection.HTTP_OK){
+                String line;
+                sb = new StringBuilder();
 
-                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line = "";
-                StringBuilder responseOutput = new StringBuilder();
+                InputStream is = connection.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is,"UTF-8");
+                br = new BufferedReader(isr);
 
                 while ((line = br.readLine()) != null) {
-                    responseOutput.append(br.readLine());
-                    System.out.println("output===============" + br.readLine());
+                    sb.append(line);
                 }
 
-                mensajeRespuesta= responseOutput.toString();
-                br.close();
-
-
-            System.out.println("output===============" + mensajeRespuesta);
+            }
+            mensajeRespuesta = sb.toString();
 
         } catch (MalformedURLException e) {
             System.out.println("MalformedURLException");
@@ -82,8 +106,9 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
         return mensajeRespuesta;
     }
 
-    public void onPostExecute(String result) {
+    @Override
+    protected void onPostExecute(String result) {
         delegate.processFinish(result);
-        //Se retorna un string que contiene un JSON con los datos obtenidos
+        this.prgEnviando.dismiss();
     }
 }

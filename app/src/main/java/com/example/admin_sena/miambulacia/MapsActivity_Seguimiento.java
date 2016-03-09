@@ -23,9 +23,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_activity__seguimiento);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-  //              .findFragmentById(R.id.map);
-    //    mapFragment.getMapAsync(this);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         Button btnCancelarPedido = (Button)findViewById(R.id.btnCancelarPedido);
         btnCancelarPedido.setOnClickListener(new View.OnClickListener() {

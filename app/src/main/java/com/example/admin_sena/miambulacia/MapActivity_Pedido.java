@@ -1,6 +1,7 @@
 package com.example.admin_sena.miambulacia;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
@@ -43,13 +45,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback, AsyncResponse {
+public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback{
 
     private GoogleMap mMap;
     Button btnEnviarAlerta;
     EditText edtDireccion;
     RadioGroup rGrpTipoEmergencia;
     RadioGroup rGrpNumPacientes;
+    Context cnt;
 
 
     UbicacionPacienteDto ubicacionPaciente;
@@ -76,8 +79,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        locationMangaer = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
+        cnt=this;
+        locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
         //this to set delegate/listener back to this class
 
 
@@ -215,9 +218,15 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private void EnviarUbicacion(UbicacionPacienteDto ubicacion){
 
 
-        PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion),getApplicationContext());
+        PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), cnt,
+                new PostAsyncrona.AsyncResponse() {
+            @Override
+            public void processFinish(String output) {
+                Toast.makeText(cnt,output.toString(),Toast.LENGTH_LONG).show();
+            }
+        });
 
-        EnviarUbicacionAsyn.delegate = this;
+
 
         System.out.println(gsson.toJson(ubicacion));
         try {
@@ -233,10 +242,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     }
 
-    @Override
-    public void processFinish(String output) {
 
-    }
 
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
     //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
