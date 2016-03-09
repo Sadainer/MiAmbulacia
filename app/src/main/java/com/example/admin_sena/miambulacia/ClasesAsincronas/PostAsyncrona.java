@@ -3,6 +3,8 @@ package com.example.admin_sena.miambulacia.ClasesAsincronas;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.example.admin_sena.miambulacia.AsyncResponse;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.net.URL;
  */
 public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
+    public AsyncResponse delegate = null;
     private String mData = null;
     URL url;
     HttpURLConnection connection;
@@ -50,17 +53,21 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
             dStream.writeBytes(mData);
             dStream.flush();
             dStream.close();
-            mensajeRespuesta = connection.getResponseMessage();
 
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line = "";
-            StringBuilder responseOutput = new StringBuilder();
+                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line = "";
+                StringBuilder responseOutput = new StringBuilder();
 
-            while((line = br.readLine()) != null ) {
-                responseOutput.append(line);
-            }
-            br.close();
+                while ((line = br.readLine()) != null) {
+                    responseOutput.append(br.readLine());
+                    System.out.println("output===============" + br.readLine());
+                }
+
+                mensajeRespuesta= responseOutput.toString();
+                br.close();
+
+
             System.out.println("output===============" + mensajeRespuesta);
 
         } catch (MalformedURLException e) {
@@ -76,7 +83,7 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     }
 
     public void onPostExecute(String result) {
-        super.onPostExecute(result);
+        delegate.processFinish(result);
         //Se retorna un string que contiene un JSON con los datos obtenidos
     }
 }
