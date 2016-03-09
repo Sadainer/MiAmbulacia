@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback, AsyncResponse {
 
     private GoogleMap mMap;
     Button btnEnviarAlerta;
@@ -78,6 +78,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         mapFragment.getMapAsync(this);
 
         locationMangaer = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
+        //this to set delegate/listener back to this class
 
 
         Criteria req = new Criteria();
@@ -213,11 +214,14 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(UbicacionPacienteDto ubicacion){
 
-        System.out.println(gsson.toJson(ubicacion));
-        PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion),getApplicationContext());
+
+        PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion),getApplicationContext());
+
+        EnviarUbicacionAsyn.delegate = this;
+
         System.out.println(gsson.toJson(ubicacion));
         try {
-            String resultado = EnviarUbicacion.execute(DIR_URL + "PedidoAmbulancia").get();
+            String resultado = EnviarUbicacionAsyn.execute(DIR_URL + "PedidoAmbulancia").get();
             System.out.println(resultado);
         } catch (InterruptedException e) {
             System.out.println("Error i");
@@ -228,6 +232,12 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         }
 
     }
+
+    @Override
+    public void processFinish(String output) {
+
+    }
+
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
     //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
     private class MiUbicacion implements LocationListener
