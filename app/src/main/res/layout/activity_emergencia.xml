@@ -31,8 +31,7 @@
         android:theme="@style/ButtonNormal"
         android:background="@drawable/selector_boton_normal"
         android:id="@+id/butPedirAmbulancia"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentBottom="true" />
 
     <RadioGroup
         android:layout_width="match_parent"

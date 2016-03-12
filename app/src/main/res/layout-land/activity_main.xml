@@ -20,6 +20,6 @@
         android:layout_height="wrap_content"
         android:text="Buscando ambulancias"
         android:id="@+id/textView"
-        android:layout_below="@+id/progressBarInicio"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

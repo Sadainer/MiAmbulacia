@@ -26,7 +26,8 @@
             android:background="@drawable/selector_boton_normal"
             android:id="@+id/butPedirAmbulancia"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="28dp" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -35,15 +36,14 @@
             android:paddingLeft="20dp"
             android:paddingTop="10dp"
             android:layout_toEndOf="@+id/relativeLayout2"
-            android:layout_alignBottom="@+id/relativeLayout2"
-            android:layout_below="@+id/linearLayout2">
+            android:layout_alignBottom="@+id/relativeLayout2">
 
             <RadioGroup
                 android:id="@+id/grpNumPaciente"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/textView3">
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true">
 
                 <RadioButton
                     android:layout_width="wrap_content"
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/st_numero_pacientes"
                 android:id="@+id/textView3"
-                android:layout_alignParentEnd="true"
+                android:layout_above="@+id/grpNumPaciente"
                 android:layout_alignParentStart="true" />
 
         </RelativeLayout>
@@ -87,8 +87,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/relativeLayout2"
             android:paddingTop="10dp"
-            android:layout_below="@+id/linearLayout2"
-            android:layout_alignParentStart="true">
+            android:layout_marginTop="27dp"
+            android:layout_below="@+id/edtDireccion"
+            android:layout_alignStart="@+id/butPedirAmbulancia">
 
             <RadioGroup
                 android:layout_width="wrap_content"
@@ -142,22 +143,23 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mi Ubicación"
-                android:id="@+id/textView4"
-                android:layout_alignTop="@+id/edtDireccion"
-                android:layout_alignParentStart="true" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/edtDireccion"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_toEndOf="@+id/textView4" />
         </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mi Ubicación"
+            android:id="@+id/textView4"
+            android:layout_alignStart="@+id/relativeLayout2"
+            android:layout_above="@+id/relativeLayout2" />
+
+        <EditText
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/edtDireccion"
+            android:layout_alignEnd="@+id/relativeLayout"
+            android:layout_below="@+id/linearLayout2"
+            android:layout_toEndOf="@+id/textView4" />
     </RelativeLayout>
 
 
