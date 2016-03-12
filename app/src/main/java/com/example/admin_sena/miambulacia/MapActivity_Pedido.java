@@ -54,7 +54,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     RadioGroup rGrpNumPacientes;
     Context cnt;
 
-
     UbicacionPacienteDto ubicacionPaciente;
 
     //Variable para guardar la posicion inicial del equipo
@@ -83,8 +82,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
         //this to set delegate/listener back to this class
 
-
-        Criteria req = new Criteria();
+       Criteria req = new Criteria();
         req.setAccuracy(Criteria.ACCURACY_FINE);
         req.setAltitudeRequired(true);
 
@@ -141,22 +139,29 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             }
         });
 
-
         // Boton para envio de alerta a la ambulancia
         btnEnviarAlerta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast escoja_num_pacientes = Toast.makeText(getApplication(),"Por favor elija un numero de pacientes",Toast.LENGTH_SHORT);
+
+                Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(),"Pro favor elija un tipo de Emergencia",Toast.LENGTH_SHORT);
+
+                if(rGrpTipoEmergencia.getCheckedRadioButtonId()== -1)
+            {escoja_tipo_emergencia.show();}
+                else if(rGrpNumPacientes.getCheckedRadioButtonId()== -1)
+            {escoja_num_pacientes.show();}
+                else
+            {
+                //Pasar al cuadro de dialogo para validar pedido
 
                 ubicacionPaciente.setIdPaciente("Sadainer");
                 ubicacionPaciente.setLatitud(posicionActual.getLatitude());
                 ubicacionPaciente.setLongitud(posicionActual.getLongitude());
                 ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
 
-                EnviarUbicacion(ubicacionPaciente);
-                //EnviarUbicacion(posicionActual); // Enviar posicion al servidor
-//             Intent intent =
-//                     new Intent(MapActivity_Pedido.this, MapsActivity_Seguimiento.class);
-//             startActivity(intent);
+                EnviarUbicacion(ubicacionPaciente);}
+
             }
         });
     }
