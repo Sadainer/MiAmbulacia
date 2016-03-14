@@ -3,46 +3,34 @@ package com.example.admin_sena.miambulacia;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -55,7 +43,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     RadioGroup rGrpTipoEmergencia;
     RadioGroup rGrpNumPacientes;
     Context cnt;
-    final Context context = this;
     UbicacionPacienteDto ubicacionPaciente;
 
     //Variable para guardar la posicion inicial del equipo
@@ -149,23 +136,23 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             public void onClick(View v) {
                 Toast escoja_num_pacientes = Toast.makeText(getApplication(),"Por favor elija un numero de pacientes",Toast.LENGTH_SHORT);
                 Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(),"Pro favor elija un tipo de Emergencia",Toast.LENGTH_SHORT);
-
+                //Validar tipo de emergencia
                 if(rGrpTipoEmergencia.getCheckedRadioButtonId()== -1)
-            {escoja_tipo_emergencia.show();}
+                    {escoja_tipo_emergencia.show();}
+                //Validar Numero de pacientes
                 else if(rGrpNumPacientes.getCheckedRadioButtonId()== -1)
-            {escoja_num_pacientes.show();}
+                    {escoja_num_pacientes.show();}
                 else
-
-            {
-                //Pasar al cuadro de dialogo para validar pedido
-                final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
-                dialogo.setContentView(R.layout.activity_dialogo_enviar_emergencia);
-                dialogo.setTitle("Esta seguro de enviar Alerta");
-                dialogo.show();
-                final TextView txt_info_pedido = (TextView)dialogo.findViewById(R.id.txt_info_pedido);
-                Button si_enviar =(Button)dialogo.findViewById(R.id.btnSi_Enviar);
-                Button no_enviar= (Button)dialogo.findViewById(R.id.btn_no_salir);
-                txt_info_pedido.setText(ubicacionPaciente.getTipoEmergencia() + " con " +
+                {
+                    //Pasar al cuadro de dialogo para validar pedido
+                    final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
+                    dialogo.setContentView(R.layout.activity_dialogo_enviar_emergencia);
+                    dialogo.setTitle("Esta seguro de enviar Alerta");
+                    dialogo.show();
+                    final TextView txt_info_pedido = (TextView)dialogo.findViewById(R.id.txt_info_pedido);
+                    Button si_enviar =(Button)dialogo.findViewById(R.id.btnSi_Enviar);
+                    Button no_enviar= (Button)dialogo.findViewById(R.id.btn_no_salir);
+                    txt_info_pedido.setText(ubicacionPaciente.getTipoEmergencia() + " con " +
                         ubicacionPaciente.getNumeroPacientes() + " pacientes involucrados " + " en " + edtDireccion.getText().toString());
 
                   // Pulsar boton "Si enviar"
@@ -237,9 +224,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
            // if (edtDireccion.getText().equals("")){
                 String Direccion2 = Direccion.get(0).getAddressLine(0);
                 String[] separated = Direccion2.split("-");
-
-                //edtDireccion.setText(Direccion.get(0).getAddressLine(0));
-            edtDireccion.setText(separated[0] + "-");
+                String Direccion_incompleta = separated[0] + "-";
+            edtDireccion.setText(Direccion_incompleta);
             int distancia = separated[0].length() +1;
             edtDireccion.setSelection(distancia);
 
