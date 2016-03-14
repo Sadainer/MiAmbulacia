@@ -1,6 +1,7 @@
 package com.example.admin_sena.miambulacia;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,6 +17,7 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -53,7 +55,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     RadioGroup rGrpTipoEmergencia;
     RadioGroup rGrpNumPacientes;
     Context cnt;
-
+    final Context context = this;
     UbicacionPacienteDto ubicacionPaciente;
 
     //Variable para guardar la posicion inicial del equipo
@@ -72,6 +74,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_activity__pedido);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -128,7 +131,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.radAccidente) {
-                    ubicacionPaciente.setTipoEmergencia("Accidente");
+                    ubicacionPaciente.setTipoEmergencia("Accidente de tránsito");
                 } else if (checkedId == R.id.radCardioRespiratorio) {
                     ubicacionPaciente.setTipoEmergencia("Cardiorespiratorio");
                 } else if (checkedId == R.id.radQuemaduras) {
@@ -136,6 +139,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 } else if (checkedId == R.id.radOtro) {
                     ubicacionPaciente.setTipoEmergencia("Otro");
                 }
+
             }
         });
 
@@ -144,7 +148,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
                 Toast escoja_num_pacientes = Toast.makeText(getApplication(),"Por favor elija un numero de pacientes",Toast.LENGTH_SHORT);
-
                 Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(),"Pro favor elija un tipo de Emergencia",Toast.LENGTH_SHORT);
 
                 if(rGrpTipoEmergencia.getCheckedRadioButtonId()== -1)
@@ -152,15 +155,42 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 else if(rGrpNumPacientes.getCheckedRadioButtonId()== -1)
             {escoja_num_pacientes.show();}
                 else
+
             {
                 //Pasar al cuadro de dialogo para validar pedido
+                final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
+                dialogo.setContentView(R.layout.activity_dialogo_enviar_emergencia);
+                dialogo.setTitle("Esta seguro de enviar Alerta");
+                dialogo.show();
+                final TextView txt_info_pedido = (TextView)dialogo.findViewById(R.id.txt_info_pedido);
+                Button si_enviar =(Button)dialogo.findViewById(R.id.btnSi_Enviar);
+                Button no_enviar= (Button)dialogo.findViewById(R.id.btn_no_salir);
+                txt_info_pedido.setText(ubicacionPaciente.getTipoEmergencia() + " con " +
+                        ubicacionPaciente.getNumeroPacientes() + " pacientes involucrados " + " en " + edtDireccion.getText().toString());
 
-                ubicacionPaciente.setIdPaciente("Sadainer");
-                ubicacionPaciente.setLatitud(posicionActual.getLatitude());
-                ubicacionPaciente.setLongitud(posicionActual.getLongitude());
-                ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
+                  // Pulsar boton "Si enviar"
+                si_enviar.setOnClickListener(new View.OnClickListener() {
 
-                EnviarUbicacion(ubicacionPaciente);}
+                    @Override
+                    public void onClick(View v) {
+                        ubicacionPaciente.setIdPaciente("Sadainer");
+                        ubicacionPaciente.setLatitud(posicionActual.getLatitude());
+                        ubicacionPaciente.setLongitud(posicionActual.getLongitude());
+                        ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
+
+                        EnviarUbicacion(ubicacionPaciente);
+                    }
+                });
+
+                no_enviar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        dialogo.dismiss();
+                    }
+                });
+
+            }
 
             }
         });
@@ -222,7 +252,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(UbicacionPacienteDto ubicacion){
 
-
         PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), cnt,
                 new PostAsyncrona.AsyncResponse() {
             @Override
@@ -230,8 +259,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 Toast.makeText(cnt,output.toString(),Toast.LENGTH_LONG).show();
             }
         });
-
-
 
         System.out.println(gsson.toJson(ubicacion));
         try {
