@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("GPS Desactivado") //
+                    .setCancelable(false)
                     .setMessage("Necesita activar GPS para mejorar su ubicación") //
                     .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
