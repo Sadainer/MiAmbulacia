@@ -162,7 +162,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     });
             }
-
+///Dialogo para validar envio de emergencia
     public class CustomDialog extends Dialog implements View.OnClickListener {
         Button okButton, cancelButton;
         Activity mActivity;

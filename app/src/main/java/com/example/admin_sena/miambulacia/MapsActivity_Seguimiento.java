@@ -31,7 +31,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity  {
     /*    btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+/////
                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
                 DialogoCalificarServicio dialogoCalificarServicio = new DialogoCalificarServicio();
                 dialogoCalificarServicio.show(fragmentManager, "tagCalificarServicio");
