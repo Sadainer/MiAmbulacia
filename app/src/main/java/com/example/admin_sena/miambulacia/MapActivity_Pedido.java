@@ -1,8 +1,12 @@
 package com.example.admin_sena.miambulacia;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -10,6 +14,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +39,10 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
 import java.util.concurrent.ExecutionException;
+
+import javax.xml.transform.Result;
 
 public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback{
 
@@ -58,6 +67,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
+
+    public ProgressDialog dialogo2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +145,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         btnEnviarAlerta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+             //   final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
                 Toast escoja_num_pacientes = Toast.makeText(getApplication(),"Por favor elija un numero de pacientes",Toast.LENGTH_SHORT);
                 Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(),"Pro favor elija un tipo de Emergencia",Toast.LENGTH_SHORT);
                 //Validar tipo de emergencia
@@ -143,44 +155,47 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 else if(rGrpNumPacientes.getCheckedRadioButtonId()== -1)
                     {escoja_num_pacientes.show();}
                 else
-                {
-                    //Pasar al cuadro de dialogo para validar pedido
-                    final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
-                    dialogo.setContentView(R.layout.activity_dialogo_enviar_emergencia);
-                    dialogo.setTitle("Esta seguro de enviar Alerta");
-                    dialogo.show();
-                    final TextView txt_info_pedido = (TextView)dialogo.findViewById(R.id.txt_info_pedido);
-                    Button si_enviar =(Button)dialogo.findViewById(R.id.btnSi_Enviar);
-                    Button no_enviar= (Button)dialogo.findViewById(R.id.btn_no_salir);
-                    txt_info_pedido.setText(ubicacionPaciente.getTipoEmergencia() + " con " +
-                        ubicacionPaciente.getNumeroPacientes() + " pacientes involucrados " + " en " + edtDireccion.getText().toString());
+                { CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
+                    dialog.show();
+            }
+        }
 
-                  // Pulsar boton "Si enviar"
-                si_enviar.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        ubicacionPaciente.setIdPaciente("Sadainer");
-                        ubicacionPaciente.setLatitud(posicionActual.getLatitude());
-                        ubicacionPaciente.setLongitud(posicionActual.getLongitude());
-                        ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-
-                        EnviarUbicacion(ubicacionPaciente);
-                    }
-                });
-
-                no_enviar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        dialogo.dismiss();
-                    }
-                });
-
+    });
             }
 
-            }
-        });
+    public class CustomDialog extends Dialog implements View.OnClickListener {
+        Button okButton, cancelButton;
+        Activity mActivity;
+
+        public CustomDialog(Activity activity) {
+            super(activity);
+            mActivity = activity;
+            setContentView(R.layout.activity_dialogo_enviar_emergencia);
+            final TextView txt_info_pedido = (TextView)findViewById(R.id.txt_info_pedido);
+            txt_info_pedido.setText(ubicacionPaciente.getTipoEmergencia() + " con " +
+                    ubicacionPaciente.getNumeroPacientes() + " pacientes involucrados " + " en " + edtDireccion.getText().toString());
+            okButton = (Button) findViewById(R.id.btnSi_Enviar);
+            okButton.setOnClickListener(this);
+            cancelButton = (Button) findViewById(R.id.btn_no_salir);
+            cancelButton.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+if (v==cancelButton){
+    dismiss();
+}else{
+    ubicacionPaciente.setIdPaciente("Sadainer");
+    ubicacionPaciente.setLatitud(posicionActual.getLatitude());
+    ubicacionPaciente.setLongitud(posicionActual.getLongitude());
+    ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
+
+    EnviarUbicacion(ubicacionPaciente);
+    //dismiss();
+    Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
+    mActivity.startActivity(i);
+}
+        }
     }
 
     @Override
@@ -242,7 +257,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
-                Toast.makeText(cnt,output.toString(),Toast.LENGTH_LONG).show();
+             //   Toast.makeText(cnt,output.toString(),Toast.LENGTH_LONG).show();
             }
         });
 

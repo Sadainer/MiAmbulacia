@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -14,21 +14,21 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity_Seguimiento extends FragmentActivity  {
 
-    private GoogleMap mMap;
+    //private GoogleMap mMap2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_activity__seguimiento);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-        .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+      //  SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+       // .findFragmentById(R.id.map);
+       // mapFragment.getMapAsync(this);
 
-        Button btnCancelarPedido = (Button)findViewById(R.id.btnCancelarPedido);
-        btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
+    //    ImageButton btnCancelarPedido = (ImageButton)findViewById(R.id.btnCancelarPedido);
+    /*    btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -39,7 +39,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 
             }
         });
-
+*/
     }
 
 
@@ -52,13 +52,13 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+   // @Override
+   // public void onMapReady(GoogleMap googleMap) {
+     //   mMap2 = googleMap;
 
         // Add a marker in Sydney and move the camera
      //   LatLng sydney = new LatLng(-34, 151);
        // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-    }
+
 }
