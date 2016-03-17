@@ -25,9 +25,8 @@
             android:theme="@style/ButtonNormal"
             android:background="@drawable/selector_boton_normal"
             android:id="@+id/butPedirAmbulancia"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="28dp" />
+            android:layout_below="@+id/relativeLayout2"
+            android:layout_centerHorizontal="true" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -36,7 +35,8 @@
             android:paddingLeft="20dp"
             android:paddingTop="10dp"
             android:layout_toEndOf="@+id/relativeLayout2"
-            android:layout_alignBottom="@+id/relativeLayout2">
+            android:layout_alignBottom="@+id/relativeLayout2"
+            android:layout_below="@+id/edtDireccion">
 
             <RadioGroup
                 android:id="@+id/grpNumPaciente"
