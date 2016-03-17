@@ -68,7 +68,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
 
-    public ProgressDialog dialogo2;
+    public ProgressDialog a;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +147,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             public void onClick(View v) {
              //   final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
                 Toast escoja_num_pacientes = Toast.makeText(getApplication(),"Por favor elija un numero de pacientes",Toast.LENGTH_SHORT);
-                Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(),"Pro favor elija un tipo de Emergencia",Toast.LENGTH_SHORT);
+                Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(),"Por favor elija un tipo de Emergencia",Toast.LENGTH_SHORT);
                 //Validar tipo de emergencia
                 if(rGrpTipoEmergencia.getCheckedRadioButtonId()== -1)
                     {escoja_tipo_emergencia.show();}
@@ -157,16 +157,20 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 else
                 { CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
                     dialog.show();
+                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+
+                        }
+                    });
             }
         }
-
     });
             }
 ///Dialogo para validar envio de emergencia
     public class CustomDialog extends Dialog implements View.OnClickListener {
-        Button okButton, cancelButton;
+        Button SiEnviar, btnsalir;
         Activity mActivity;
-
         public CustomDialog(Activity activity) {
             super(activity);
             mActivity = activity;
@@ -174,29 +178,34 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             final TextView txt_info_pedido = (TextView)findViewById(R.id.txt_info_pedido);
             txt_info_pedido.setText(ubicacionPaciente.getTipoEmergencia() + " con " +
                     ubicacionPaciente.getNumeroPacientes() + " pacientes involucrados " + " en " + edtDireccion.getText().toString());
-            okButton = (Button) findViewById(R.id.btnSi_Enviar);
-            okButton.setOnClickListener(this);
-            cancelButton = (Button) findViewById(R.id.btn_no_salir);
-            cancelButton.setOnClickListener(this);
+            SiEnviar = (Button) findViewById(R.id.btnSi_Enviar);
+            SiEnviar.setOnClickListener(this);
+            btnsalir = (Button) findViewById(R.id.btn_no_salir);
+            btnsalir.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-if (v==cancelButton){
-    dismiss();
+if (v==btnsalir){
+cancel();
 }else{
+// Pulso boton Enviar
+
+
     ubicacionPaciente.setIdPaciente("Sadainer");
     ubicacionPaciente.setLatitud(posicionActual.getLatitude());
     ubicacionPaciente.setLongitud(posicionActual.getLongitude());
     ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-
+//dismiss();
+    //EnviarUbicacion(ubicacionPaciente);
     EnviarUbicacion(ubicacionPaciente);
-    //dismiss();
     Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
     mActivity.startActivity(i);
+    //Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
+    //mActivity.startActivity(i);
 }
         }
-    }
+}
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -243,21 +252,20 @@ if (v==cancelButton){
             edtDireccion.setText(Direccion_incompleta);
             int distancia = separated[0].length() +1;
             edtDireccion.setSelection(distancia);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(UbicacionPacienteDto ubicacion){
-
+a = ProgressDialog.show(this, "dialog title",
+                "dialog message", true);
         PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), cnt,
                 new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
-             //   Toast.makeText(cnt,output.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(cnt,output.toString(),Toast.LENGTH_LONG).show();
             }
         });
 
@@ -272,7 +280,7 @@ if (v==cancelButton){
             System.out.println("Error e");
             e.printStackTrace();
         }
-
+a.dismiss();
     }
 
 
