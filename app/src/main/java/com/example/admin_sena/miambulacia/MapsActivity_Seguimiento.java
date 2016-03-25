@@ -14,8 +14,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap2;
-    Bundle bundle = this.getIntent().getExtras();
-    LatLng MiPosicion = new LatLng(bundle.getDouble("MiLatitud"),bundle.getDouble("MiLongitud"));
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +42,15 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Bundle bundle = this.getIntent().getExtras();
+        LatLng MiPosicion = new LatLng(bundle.getDouble("MiLatitud"),bundle.getDouble("MiLongitud"));
         mMap2 = googleMap;
         mMap2.setMyLocationEnabled(true);
 CrearMarcador(MiPosicion,"Mi Posicion");
     }
 
 
-    public void CrearMarcador(LatLng latLng, String Titulo) {
+    public void CrearMarcador(LatLng MiPosicion, String Titulo) {
         mMap2.clear();
         mMap2.addMarker(new MarkerOptions()
 
