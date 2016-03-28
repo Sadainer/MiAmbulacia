@@ -14,8 +14,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
-import android.os.Handler;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -39,10 +37,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
 import java.util.concurrent.ExecutionException;
-
-import javax.xml.transform.Result;
 
 public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback{
 
@@ -77,7 +72,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         setContentView(R.layout.activity_map_activity__pedido);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.map1);
         mapFragment.getMapAsync(this);
         cnt=this;
         locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
@@ -196,10 +191,14 @@ cancel();
     ubicacionPaciente.setLatitud(posicionActual.getLatitude());
     ubicacionPaciente.setLongitud(posicionActual.getLongitude());
     ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-//dismiss();
-    //EnviarUbicacion(ubicacionPaciente);
+Bundle a= new Bundle();
+
     EnviarUbicacion(ubicacionPaciente);
+
     Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
+    a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
+    a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
+    i.putExtras(a);
     mActivity.startActivity(i);
     //Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
     //mActivity.startActivity(i);

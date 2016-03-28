@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             // TODO
-                            Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS );
+                            Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                             startActivityForResult(myIntent,requestcode);
                         }
                     }); //
