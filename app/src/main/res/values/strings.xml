@@ -1,15 +1,10 @@
 <resources>
     <string name="app_name">Mi Ambulacia</string>
-    <string name="title_activity_map_activity__pedido">Solicitud de ambulancia</string>
+
     <string name="title_activity_maps_activity__seguimiento">Map</string>
-    <string name="st_btn_Pedir_ambulancia">Pedir Ambulancia</string>
-    <string name="st_no_gracias">No, gracias</string>
-    <string name="st_EnviarCalificacion">Enviar</string>
-    <string name="st_Excelente">Excelente</string>
-    <string name="st_bueno">Bueno</string>
-    <string name="st_regular">Regular</string>
-    <string name="st_malo">Malo</string>
-    <string name="st_pesimo">Pesimo</string>
+                <!--  strings Pedido  -->
+    <string name="title_activity_map_activity__pedido">Solicitud de ambulancia</string>
+    <string name="text_Miubicacion">Mi Ubicacion</string>
     <string name="st_Accidente_transito">Accidente de transito</string>
     <string name="st_quemaduras">Quemaduras</string>
     <string name="st_cardiorespiratorio">Cardiorespiratorio</string>
@@ -17,5 +12,22 @@
     <string name="st_Multiple">Multiple</string>
     <string name="st_tipo_emergencia">Tipo de emergencia</string>
     <string name="st_numero_pacientes">Numero de pacientes</string>
+    <string name="st_btn_Pedir_ambulancia">Pedir Ambulancia</string>
+
+    <!--  strings Dialogo Enviar Emergencia  -->
+
+    <string name="st_no_gracias">No, gracias</string>
+    <string name="st_Si_enviar">Si, Enviar</string>
+    <string name="st_No_salir">No, Salirr</string>
+    <!--  strings Calificar servicio  -->
+
+    <string name="st_EnviarCalificacion">Enviar</string>
+    <string name="st_Excelente">Excelente</string>
+    <string name="st_bueno">Bueno</string>
+    <string name="st_regular">Regular</string>
+    <string name="st_malo">Malo</string>
+    <string name="st_pesimo">Pesimo</string>
+
+
     <string name="title_activity_main2">Main2Activity</string>
 </resources>
