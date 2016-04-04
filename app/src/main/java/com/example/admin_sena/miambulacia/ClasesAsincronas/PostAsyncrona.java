@@ -58,7 +58,7 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        String mensajeRespuesta = null;
+        String mensajeRespuesta = "";
         try {
 
 
