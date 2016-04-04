@@ -270,8 +270,7 @@ a = ProgressDialog.show(this, "dialog title",
 
         System.out.println(gsson.toJson(ubicacion));
         try {
-            String resultado = EnviarUbicacionAsyn.execute(DIR_URL + "PedidoAmbulancia").get();
-            System.out.println(resultado);
+            EnviarUbicacionAsyn.execute(DIR_URL + "PedidoAmbulancia").get();
         } catch (InterruptedException e) {
             System.out.println("Error i");
             e.printStackTrace();
