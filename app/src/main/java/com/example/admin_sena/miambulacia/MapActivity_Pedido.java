@@ -194,8 +194,8 @@ if (v==btnsalir){
 //cancel();
 Bundle a = new Bundle();
       Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
-//a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
-  //    a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
+a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
+      a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
     a.putString("LatAmbulancia", LatAmbulancia);
     a.putString("LongAmbulancia", LongAmbulancia);
     i.putExtras(a);

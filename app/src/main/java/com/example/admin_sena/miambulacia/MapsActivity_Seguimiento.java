@@ -36,7 +36,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             @Override
             public void onClick(View v) {
                 Bundle bundle = getIntent().getExtras();
-mostrar.setText(bundle.getString("LatAmbulancia") + bundle.getString("LongAmbulancia") );
+mostrar.setText("Ubicacion ambulancia: " + bundle.getString("LatAmbulancia") + bundle.getString("LongAmbulancia") + "MiUbicacion: " + String.valueOf(bundle.getDouble("MiLatitud")) + String.valueOf(bundle.getDouble("MiLongitud")) );
             }
         });
     /*    btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
