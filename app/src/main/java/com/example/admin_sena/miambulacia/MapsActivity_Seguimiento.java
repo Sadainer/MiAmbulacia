@@ -62,7 +62,7 @@ mostrar.setText(bundle.getString("LatAmbulancia") + bundle.getString("LongAmbula
         mMap2 = googleMap;
         mMap2.setMyLocationEnabled(true);
 
-CrearMarcador(MiPosicion, "Mi Posicion");
+//CrearMarcador(MiPosicion, "Mi Posicion");
         CrearMarcador(PosicionAmbulancia,"Ambulancia");
 
     }
