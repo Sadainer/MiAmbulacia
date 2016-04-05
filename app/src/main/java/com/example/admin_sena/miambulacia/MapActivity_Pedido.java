@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+
 public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback{
 
     private GoogleMap mMap;
@@ -63,9 +65,12 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
-String UbicacionAmbulancia ="ubicacion";
+String LatAmbulancia ="b";
+    String LongAmbulancia ="a";
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_activity__pedido);
@@ -161,10 +166,14 @@ String UbicacionAmbulancia ="ubicacion";
         }
     });
             }
+
+
+
 ///Dialogo para validar envio de emergencia
-    public class CustomDialog extends Dialog implements View.OnClickListener {
+    public class CustomDialog extends Dialog implements View.OnClickListener  {
         Button SiEnviar, btnsalir;
         Activity mActivity;
+
         public CustomDialog(Activity activity) {
             super(activity);
             mActivity = activity;
@@ -176,13 +185,23 @@ String UbicacionAmbulancia ="ubicacion";
             SiEnviar.setOnClickListener(this);
             btnsalir = (Button) findViewById(R.id.btn_no_salir);
             btnsalir.setOnClickListener(this);
+
         }
 
         @Override
         public void onClick(View v) {
 if (v==btnsalir){
-cancel();
-}else{
+//cancel();
+Bundle a = new Bundle();
+      Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
+      a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
+      a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
+    a.putString("LatAmbulancia", LatAmbulancia);
+    a.putString("LongAmbulancia", LongAmbulancia);
+    i.putExtras(a);
+    mActivity.startActivity(i);
+
+}else {
 // Pulso boton Enviar
 
 
@@ -190,18 +209,16 @@ cancel();
     ubicacionPaciente.setLatitud(posicionActual.getLatitude());
     ubicacionPaciente.setLongitud(posicionActual.getLongitude());
     ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-Bundle a= new Bundle();
 
-    EnviarUbicacion(ubicacionPaciente);
 
-    Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
-    a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
-    a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
-    i.putExtras(a);
-    mActivity.startActivity(i);
+   // EnviarUbicacion(ubicacionPaciente);
+EnviarUbicacion(ubicacionPaciente);
+
 
 }
         }
+
+
 }
 
     @Override
@@ -262,8 +279,23 @@ Bundle a= new Bundle();
             @Override
             public void processFinish(String output) {
                 Toast.makeText(cnt,output,Toast.LENGTH_LONG).show();
-                String nuevo = output.substring(4,10);
-                Log.e("PruebaLatLng",nuevo);
+                String[] nuevo = output.split(":");
+                Log.e("ObjetoOutput",output);
+
+          /*      for (String item : nuevo)
+                {
+                    System.out.println("item = " + item);
+                    Log.e("PruebaLatLng", item);
+                }
+            */
+                LatAmbulancia= nuevo[3].substring(0, 11);
+                LongAmbulancia= nuevo[4].substring(0, 12);
+             //   Log.e("Latitud",k);
+              //  Log.e("Longitud",n);
+           //     Double LatAmbulancia = Double.valueOf(nuevo[4].substring(0,10));
+             //   Double LongAmbulancia = Double.valueOf(nuevo[5].substring(0,11));
+
+             
             }
         });
 
@@ -277,6 +309,7 @@ Bundle a= new Bundle();
             System.out.println("Error e");
             e.printStackTrace();
         }
+
 
     }
 
