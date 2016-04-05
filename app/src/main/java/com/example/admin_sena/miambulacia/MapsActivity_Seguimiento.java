@@ -3,6 +3,7 @@ package com.example.admin_sena.miambulacia;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.ImageButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,7 +26,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
         .findFragmentById(R.id.fragment2);
         mapFragment.getMapAsync(this);
-    //    ImageButton btnCancelarPedido = (ImageButton)findViewById(R.id.btnCancelarPedido);
+        ImageButton btnCancelarPedido = (ImageButton)findViewById(R.id.btnCancelarPedido);
     /*    btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,13 +60,6 @@ CrearMarcador(MiPosicion,"Mi Posicion");
         mMap2.moveCamera(CameraUpdateFactory.newLatLng(MiPosicion));
         mMap2.animateCamera(CameraUpdateFactory.newLatLngZoom(MiPosicion, 15.0f));
     }
-        // @Override
-   // public void onMapReady(GoogleMap googleMap) {
-     //   mMap2 = googleMap;
 
-        // Add a marker in Sydney and move the camera
-     //   LatLng sydney = new LatLng(-34, 151);
-       // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-       // mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
 }

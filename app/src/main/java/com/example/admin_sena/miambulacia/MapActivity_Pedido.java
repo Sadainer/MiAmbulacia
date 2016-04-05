@@ -17,6 +17,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -62,7 +63,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
-
+String UbicacionAmbulancia ="ubicacion";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -198,8 +199,7 @@ Bundle a= new Bundle();
     a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
     i.putExtras(a);
     mActivity.startActivity(i);
-    //Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
-    //mActivity.startActivity(i);
+
 }
         }
 }
@@ -262,6 +262,8 @@ Bundle a= new Bundle();
             @Override
             public void processFinish(String output) {
                 Toast.makeText(cnt,output,Toast.LENGTH_LONG).show();
+                String nuevo = output.substring(4,10);
+                Log.e("PruebaLatLng",nuevo);
             }
         });
 
