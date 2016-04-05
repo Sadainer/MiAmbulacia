@@ -298,7 +298,7 @@ EnviarUbicacion(ubicacionPaciente);
              
             }
         });
-
+//
         System.out.println(gsson.toJson(ubicacion));
         try {
             EnviarUbicacionAsyn.execute(DIR_URL + "PedidoAmbulancia").get();

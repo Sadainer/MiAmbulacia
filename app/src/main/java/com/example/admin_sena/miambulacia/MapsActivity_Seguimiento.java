@@ -58,12 +58,12 @@ mostrar.setText(bundle.getString("LatAmbulancia") + bundle.getString("LongAmbula
         //SharedPreferences prefss = getSharedPreferences("prefUbicacion",MODE_PRIVATE);
         Bundle bundle = this.getIntent().getExtras();
         LatLng MiPosicion = new LatLng(bundle.getDouble("MiLatitud"),bundle.getDouble("MiLongitud"));
-//        LatLng PosicionAmbulancia= new LatLng(Double.valueOf(bundle.getString("LatAmbulancia")),Double.valueOf(bundle.getString("LongAmbulancia")));
+       LatLng PosicionAmbulancia= new LatLng(Double.valueOf(bundle.getString("LatAmbulancia")),Double.valueOf(bundle.getString("LongAmbulancia")));
         mMap2 = googleMap;
         mMap2.setMyLocationEnabled(true);
 
 CrearMarcador(MiPosicion, "Mi Posicion");
- //       CrearMarcador(PosicionAmbulancia,"Ambulancia");
+        CrearMarcador(PosicionAmbulancia,"Ambulancia");
 
     }
 
