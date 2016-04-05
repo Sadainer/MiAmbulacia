@@ -63,8 +63,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
 
-    public ProgressDialog a;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -258,13 +256,12 @@ Bundle a= new Bundle();
 
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(UbicacionPacienteDto ubicacion){
-a = ProgressDialog.show(this, "dialog title",
-                "dialog message", true);
+
         PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), cnt,
                 new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
-                Toast.makeText(cnt,output.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(cnt,output,Toast.LENGTH_LONG).show();
             }
         });
 
@@ -278,7 +275,7 @@ a = ProgressDialog.show(this, "dialog title",
             System.out.println("Error e");
             e.printStackTrace();
         }
-a.dismiss();
+
     }
 
 
