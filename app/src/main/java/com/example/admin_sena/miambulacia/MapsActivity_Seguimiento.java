@@ -1,24 +1,37 @@
 package com.example.admin_sena.miambulacia;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
+import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+
+import java.util.concurrent.ExecutionException;
 
 public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap2;
 //    private static String DIR_URL1 = "http://190.109.185.138:8013/api/";
+final Gson gsson = new Gson();
+    private static String DIR_URL = "http://190.109.185.138:8013/api/";
+    Context cnt;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +42,17 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
         .findFragmentById(R.id.fragment2);
         mapFragment.getMapAsync(this);
+        cnt=this;
         ImageButton btnCancelarPedido = (ImageButton)findViewById(R.id.btnCancelarPedido);
         final TextView mostrar = (TextView)findViewById(R.id.txtmostrar);
+      final   Intent a = getIntent();
 
         btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = getIntent().getExtras();
-mostrar.setText("Ubicacion ambulancia: " + bundle.getString("LatAmbulancia") + bundle.getString("LongAmbulancia") + "MiUbicacion: " + String.valueOf(bundle.getDouble("MiLatitud")) + String.valueOf(bundle.getDouble("MiLongitud")) );
+                Bundle bundle = a.getExtras();
+
+                mostrar.setText("Ubicacion ambulancia: " + bundle.getString("LatAmbulancia") + bundle.getString("LongAmbulancia") + "MiUbicacion: " + String.valueOf(bundle.getDouble("MiLatitud")) + String.valueOf(bundle.getDouble("MiLongitud")));
             }
         });
     /*    btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
@@ -56,13 +72,17 @@ mostrar.setText("Ubicacion ambulancia: " + bundle.getString("LatAmbulancia") + b
     @Override
     public void onMapReady(GoogleMap googleMap) {
         //SharedPreferences prefss = getSharedPreferences("prefUbicacion",MODE_PRIVATE);
+        Intent a = getIntent();
+
+
         Bundle bundle = this.getIntent().getExtras();
+
         LatLng MiPosicion = new LatLng(bundle.getDouble("MiLatitud"),bundle.getDouble("MiLongitud"));
        LatLng PosicionAmbulancia= new LatLng(Double.valueOf(bundle.getString("LatAmbulancia")),Double.valueOf(bundle.getString("LongAmbulancia")));
         mMap2 = googleMap;
         mMap2.setMyLocationEnabled(true);
 
-//CrearMarcador(MiPosicion, "Mi Posicion");
+CrearMarcador(MiPosicion, "Mi Posicion");
         CrearMarcador(PosicionAmbulancia,"Ambulancia");
 
     }
@@ -77,6 +97,9 @@ mostrar.setText("Ubicacion ambulancia: " + bundle.getString("LatAmbulancia") + b
         mMap2.moveCamera(CameraUpdateFactory.newLatLng(MiPosicion));
         mMap2.animateCamera(CameraUpdateFactory.newLatLngZoom(MiPosicion, 14.0f));
     }
+
+
+
 
 
 }

@@ -18,7 +18,7 @@
 
     <string name="st_no_gracias">No, gracias</string>
     <string name="st_Si_enviar">Si, Enviar</string>
-    <string name="st_No_salir">No, Salirr</string>
+    <string name="st_No_salir">No, Salir</string>
     <!--  strings Calificar servicio  -->
 
     <string name="st_EnviarCalificacion">Enviar</string>

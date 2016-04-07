@@ -67,7 +67,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     final Gson gsson = new Gson();
 String LatAmbulancia ="b";
     String LongAmbulancia ="a";
-
+public ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -82,7 +82,7 @@ String LatAmbulancia ="b";
         locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
         //this to set delegate/listener back to this class
 
-       Criteria req = new Criteria();
+        Criteria req = new Criteria();
         req.setAccuracy(Criteria.ACCURACY_FINE);
         req.setAltitudeRequired(true);
 
@@ -156,6 +156,7 @@ String LatAmbulancia ="b";
                 else
                 { CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
                     dialog.show();
+                    dialog.setTitle("Enviar Emergencia?");
                     dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
@@ -191,32 +192,23 @@ String LatAmbulancia ="b";
         @Override
         public void onClick(View v) {
 if (v==btnsalir){
-//cancel();
-Bundle a = new Bundle();
-      Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
-a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
-      a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
-    a.putString("LatAmbulancia", LatAmbulancia);
-    a.putString("LongAmbulancia", LongAmbulancia);
-    i.putExtras(a);
-    mActivity.startActivity(i);
+cancel();
+
 
 }else {
 // Pulso boton Enviar
 
-
+    progress = ProgressDialog.show(mActivity, "Enviando Emergencia",
+            "Por favor espere", true);
     ubicacionPaciente.setIdPaciente("Sadainer");
     ubicacionPaciente.setLatitud(posicionActual.getLatitude());
     ubicacionPaciente.setLongitud(posicionActual.getLongitude());
     ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
 
-
-   // EnviarUbicacion(ubicacionPaciente);
-EnviarUbicacion(ubicacionPaciente);
-
-
+    EnviarUbicacion(ubicacionPaciente, mActivity);
 }
         }
+
 
 
 }
@@ -272,36 +264,39 @@ EnviarUbicacion(ubicacionPaciente);
     }
 
     //Metodo para enviar Ubicacion al servidor
-    private void EnviarUbicacion(UbicacionPacienteDto ubicacion){
+    private void EnviarUbicacion(UbicacionPacienteDto ubicacion, final Context context)  {
 
-        PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), cnt,
+        PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), context,
                 new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
-                Toast.makeText(cnt,output,Toast.LENGTH_LONG).show();
+      //          Toast.makeText(cnt,output,Toast.LENGTH_LONG).show();
                 String[] nuevo = output.split(":");
-                Log.e("ObjetoOutput",output);
+                Log.e("ObjetoOutput", output);
 
-          /*      for (String item : nuevo)
-                {
-                    System.out.println("item = " + item);
-                    Log.e("PruebaLatLng", item);
-                }
-            */
                 LatAmbulancia= nuevo[3].substring(0, 11);
                 LongAmbulancia= nuevo[4].substring(0, 12);
-             //   Log.e("Latitud",k);
-              //  Log.e("Longitud",n);
-           //     Double LatAmbulancia = Double.valueOf(nuevo[4].substring(0,10));
-             //   Double LongAmbulancia = Double.valueOf(nuevo[5].substring(0,11));
+                Bundle a = new Bundle();
+                Intent i = new Intent(context, MapsActivity_Seguimiento.class);
+                a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
+                a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
+                a.putString("LatAmbulancia", LatAmbulancia);
+                a.putString("LongAmbulancia", LongAmbulancia);
+                i.putExtras(a);
+                i.putExtra("ubicacionPaciente", ubicacionPaciente);
+                context.startActivity(i);
 
-             
+
             }
+
         });
 //
+        //progress.dismiss();
         System.out.println(gsson.toJson(ubicacion));
+
         try {
             EnviarUbicacionAsyn.execute(DIR_URL + "PedidoAmbulancia").get();
+
         } catch (InterruptedException e) {
             System.out.println("Error i");
             e.printStackTrace();
@@ -309,10 +304,7 @@ EnviarUbicacion(ubicacionPaciente);
             System.out.println("Error e");
             e.printStackTrace();
         }
-
-
     }
-
 
 
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un

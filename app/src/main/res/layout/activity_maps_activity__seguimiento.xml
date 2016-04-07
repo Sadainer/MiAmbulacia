@@ -49,8 +49,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/txtmostrar"
-            android:layout_gravity="left|bottom"
-            android:text="a" />
+            android:layout_gravity="left|bottom" />
     </FrameLayout>
 </RelativeLayout>
 

@@ -1,11 +1,12 @@
 package com.example.admin_sena.miambulacia.Dto;
 
-import java.util.Date;
+import java.io.Serializable;
+
 
 /**
  * Created by Admin_Sena on 01/03/2016.
  */
-public class UbicacionPacienteDto {
+public class UbicacionPacienteDto implements Serializable {
     private String IdPaciente;
     private Double Latitud;
     private Double Longitud;
