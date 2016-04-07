@@ -19,6 +19,13 @@
     <string name="st_no_gracias">No, gracias</string>
     <string name="st_Si_enviar">Si, Enviar</string>
     <string name="st_No_salir">No, Salir</string>
+
+
+    <!--  strings seguimiento -->
+
+    <string name="st_btn_Cancelar">Cancelar</string>
+
+
     <!--  strings Calificar servicio  -->
 
     <string name="st_EnviarCalificacion">Enviar</string>
