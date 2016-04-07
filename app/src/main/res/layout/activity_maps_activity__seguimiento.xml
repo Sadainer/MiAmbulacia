@@ -37,7 +37,7 @@
 
 
         <Button
-            android:layout_width="270dp"
+            android:layout_width="287dp"
             android:layout_height="wrap_content"
             android:text="@string/st_btn_Cancelar"
             android:theme="@style/ButtonNormal"
