@@ -7,7 +7,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -67,7 +66,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     final Gson gsson = new Gson();
 String LatAmbulancia ="b";
     String LongAmbulancia ="a";
-public ProgressDialog progress;
+    String IdAmbulancia ="";
+    public ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -104,7 +104,7 @@ public ProgressDialog progress;
         mapFragment.getMapAsync(this);
 
 
-        btnEnviarAlerta = (Button) findViewById(R.id.butPedirAmbulancia);
+        btnEnviarAlerta = (Button) findViewById(R.id.btnCancelarPedido);
         edtDireccion = (EditText) findViewById(R.id.edtDireccion);
         rGrpNumPacientes = (RadioGroup) findViewById(R.id.grpNumPaciente);
         rGrpTipoEmergencia = (RadioGroup) findViewById(R.id.grpTipEmergencia);
@@ -198,8 +198,8 @@ cancel();
 }else {
 // Pulso boton Enviar
 
-    progress = ProgressDialog.show(mActivity, "Enviando Emergencia",
-            "Por favor espere", true);
+    //progress = ProgressDialog.show(mActivity, "Enviando Emergencia",
+      //      "Por favor espere", true);
     ubicacionPaciente.setIdPaciente("Sadainer");
     ubicacionPaciente.setLatitud(posicionActual.getLatitude());
     ubicacionPaciente.setLongitud(posicionActual.getLongitude());
@@ -208,9 +208,6 @@ cancel();
     EnviarUbicacion(ubicacionPaciente, mActivity);
 }
         }
-
-
-
 }
 
     @Override
@@ -270,22 +267,39 @@ cancel();
                 new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
-      //          Toast.makeText(cnt,output,Toast.LENGTH_LONG).show();
-                String[] nuevo = output.split(":");
-                Log.e("ObjetoOutput", output);
+                Toast.makeText(cnt, output, Toast.LENGTH_LONG).show();
+                //Mapeo de output para obtener Id y LatLng
+                String  output2  =   output.replace("{"," ").replace("}"," ");
+                String[] nuevo = output2.split(":");
+                String[] b = nuevo[1].split(",");
+                String[] b1 = nuevo[3].split(",");
+                String[] b2 = nuevo[4].split(",");
+                String IdAmbulancia = b[0];  //IdAmbulancia
+                LatAmbulancia= b1[0];
+                LongAmbulancia=b2[0];
+                Log.e("Latitud",LatAmbulancia);
+                Log.e("Longitud",LongAmbulancia);
 
-                LatAmbulancia= nuevo[3].substring(0, 11);
-                LongAmbulancia= nuevo[4].substring(0, 12);
+                Double k= Double.valueOf(IdAmbulancia) +6;
+                Log.e("IdAmbulanca+1",String.valueOf(k));
+
+                Log.e("outputmodificado", output);
+                for(String str : nuevo)
+                {
+                    Log.e("nuevoSt",str);
+                }
+
                 Bundle a = new Bundle();
                 Intent i = new Intent(context, MapsActivity_Seguimiento.class);
                 a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
                 a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
                 a.putString("LatAmbulancia", LatAmbulancia);
                 a.putString("LongAmbulancia", LongAmbulancia);
+                a.putString("IdAmbulancia", IdAmbulancia);
                 i.putExtras(a);
-                i.putExtra("ubicacionPaciente", ubicacionPaciente);
+             //   i.putExtra("ubicacionPaciente", ubicacionPaciente);
                 context.startActivity(i);
-
+          //      progress.dismiss();
 
             }
 
@@ -293,7 +307,7 @@ cancel();
 //
         //progress.dismiss();
         System.out.println(gsson.toJson(ubicacion));
-
+Log.e("Envia",gsson.toJson(ubicacion));
         try {
             EnviarUbicacionAsyn.execute(DIR_URL + "PedidoAmbulancia").get();
 
