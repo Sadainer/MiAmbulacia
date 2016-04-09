@@ -14,10 +14,9 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="353dp"
+        android:layout_height="401dp"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.35"
         android:weightSum="1">
 
         <LinearLayout
@@ -46,9 +45,10 @@
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="324dp"
             android:layout_height="wrap_content"
-            android:padding="@dimen/activity_horizontal_margin">
+            android:padding="@dimen/activity_horizontal_margin"
+            android:weightSum="1">
 
             <Button
                 android:layout_width="wrap_content"
@@ -62,15 +62,14 @@ android:layout_margin="@dimen/activity_vertical_margin"
                 />
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="109dp"
                 android:layout_height="match_parent"
                 android:text="@string/st_No_salir"
                 android:id="@+id/btn_no_salir"
                 android:theme="@style/ButtonNormal"
                 android:background="@drawable/selector_boton_normal"
                 android:padding="@dimen/activity_horizontal_margin"
-                android:layout_margin="@dimen/activity_horizontal_margin"
-                />
+                android:layout_margin="@dimen/activity_horizontal_margin" />
 
         </LinearLayout>
 
