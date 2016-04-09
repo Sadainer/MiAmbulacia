@@ -191,15 +191,16 @@ cancel();
     ubicacionPaciente.setLatitud(posicionActual.getLatitude());
     ubicacionPaciente.setLongitud(posicionActual.getLongitude());
     ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-Bundle a= new Bundle();
+    Bundle a= new Bundle();
 
     EnviarUbicacion(ubicacionPaciente);
 
-    Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
-    a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
-    a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
-    i.putExtras(a);
-    mActivity.startActivity(i);
+//    Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
+//    a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
+//    a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
+//    i.putExtras(a);
+//    mActivity.startActivity(i);
+
     //Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
     //mActivity.startActivity(i);
 }
@@ -248,9 +249,9 @@ Bundle a= new Bundle();
                 String Direccion2 = Direccion.get(0).getAddressLine(0);
                 String[] separated = Direccion2.split("-");
                 String Direccion_incompleta = separated[0] + "-";
-            edtDireccion.setText(Direccion_incompleta);
-            int distancia = separated[0].length() +1;
-            edtDireccion.setSelection(distancia);
+                edtDireccion.setText(Direccion_incompleta);
+                int distancia = separated[0].length() +1;
+                edtDireccion.setSelection(distancia);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -258,7 +259,7 @@ Bundle a= new Bundle();
 
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(UbicacionPacienteDto ubicacion){
-a = ProgressDialog.show(this, "dialog title",
+        a = ProgressDialog.show(this, "dialog title",
                 "dialog message", true);
         PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), cnt,
                 new PostAsyncrona.AsyncResponse() {
@@ -275,10 +276,10 @@ a = ProgressDialog.show(this, "dialog title",
             System.out.println("Error i");
             e.printStackTrace();
         } catch (ExecutionException e) {
-            System.out.println("Error e");
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
-a.dismiss();
+        a.dismiss();
     }
 
 
