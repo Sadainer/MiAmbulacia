@@ -261,53 +261,34 @@ cancel();
     }
 
     //Metodo para enviar Ubicacion al servidor
-    private void EnviarUbicacion(UbicacionPacienteDto ubicacion, final Context context)  {
+    private void EnviarUbicacion(final UbicacionPacienteDto ubicacion, final Context context)  {
 
         PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), context,
                 new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
-                Toast.makeText(cnt, output, Toast.LENGTH_LONG).show();
-                //Mapeo de output para obtener Id y LatLng
-                String  output2  =   output.replace("{"," ").replace("}"," ");
-                String[] nuevo = output2.split(":");
-                String[] b = nuevo[1].split(",");
-                String[] b1 = nuevo[3].split(",");
-                String[] b2 = nuevo[4].split(",");
-                String IdAmbulancia = b[0];  //IdAmbulancia
-                LatAmbulancia= b1[0];
-                LongAmbulancia=b2[0];
-                Log.e("Latitud",LatAmbulancia);
-                Log.e("Longitud",LongAmbulancia);
+                Toast.makeText(cnt,"output:"+ output, Toast.LENGTH_LONG).show();
 
-                Double k= Double.valueOf(IdAmbulancia) +6;
-                Log.e("IdAmbulanca+1",String.valueOf(k));
+                Log.e("output",output);
 
-                Log.e("outputmodificado", output);
-                for(String str : nuevo)
-                {
-                    Log.e("nuevoSt",str);
+                if (output!=""){
+                 UbicacionPacienteDto outputtojson = gsson.fromJson(output,UbicacionPacienteDto.class);
+
+                    finish();
+                    Intent i = new Intent(context,MapsActivity_Seguimiento.class);
+                    //guardar variables en intent
+                    i.putExtra("LatAmbulancia",outputtojson.getLatitud()).putExtra("LongAmbulancia",outputtojson.getLongitud());
+                    i.putExtra("MiLatitud",ubicacion.getLatitud()).putExtra("MiLongitud",ubicacion.getLongitud());
+                    startActivity(i);
                 }
-
-                Bundle a = new Bundle();
-                Intent i = new Intent(context, MapsActivity_Seguimiento.class);
-                a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
-                a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
-                a.putString("LatAmbulancia", LatAmbulancia);
-                a.putString("LongAmbulancia", LongAmbulancia);
-                a.putString("IdAmbulancia", IdAmbulancia);
-                i.putExtras(a);
-             //   i.putExtra("ubicacionPaciente", ubicacionPaciente);
-                context.startActivity(i);
-          //      progress.dismiss();
 
             }
 
         });
-//
+
         //progress.dismiss();
         System.out.println(gsson.toJson(ubicacion));
-Log.e("Envia",gsson.toJson(ubicacion));
+        Log.e("Envia",gsson.toJson(ubicacion));
         try {
             EnviarUbicacionAsyn.execute(DIR_URL + "PedidoAmbulancia").get();
 

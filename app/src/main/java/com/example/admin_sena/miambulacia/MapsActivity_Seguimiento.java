@@ -37,6 +37,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     Context cnt;
     Timer timer;
     TimerTask timerTask;
+    Gson actjson = new Gson();
     final Handler handler = new Handler();
 
     @Override
@@ -79,9 +80,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     public void onMapReady(GoogleMap googleMap) {
         //SharedPreferences prefss = getSharedPreferences("prefUbicacion",MODE_PRIVATE);
 
-        Bundle bundle = this.getIntent().getExtras();
-        LatLng MiPosicion = new LatLng(bundle.getDouble("MiLatitud"),bundle.getDouble("MiLongitud"));
-       LatLng PosicionAmbulancia= new LatLng(Double.valueOf(bundle.getString("LatAmbulancia")),Double.valueOf(bundle.getString("LongAmbulancia")));
+        Intent a = this.getIntent();
+        LatLng MiPosicion = new LatLng(a.getDoubleExtra("MiLatitud",0),a.getDoubleExtra("MiLongitud",0));
+        LatLng PosicionAmbulancia= new LatLng(a.getDoubleExtra("LatAmbulancia",0),a.getDoubleExtra("LongAmbulancia",0));
         mMap2 = googleMap;
         mMap2.setMyLocationEnabled(true);
 
@@ -122,6 +123,33 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 
 //Actualizar posicion ambulancia
 
+    private void ActualizarUbicacionAmbulancias(UbicacionPacienteDto ubicacionPacienteDto){
+        final   Intent a = getIntent();
+        Bundle bundle = a.getExtras();
+        PostAsyncrona Actualizar = new PostAsyncrona(actjson.toJson(ubicacionPacienteDto), MapsActivity_Seguimiento.this, new PostAsyncrona.AsyncResponse() {
+            @Override
+            public void processFinish(String output) {
+Toast.makeText(MapsActivity_Seguimiento.this,output,Toast.LENGTH_SHORT).show();
+                Log.e("OutputActualizar",output);
+            }
+        });
+
+
+        try {
+             Actualizar.execute(DIR_URL + bundle.getString("IdAmbulancia")).get();
+
+        } catch (InterruptedException e) {
+            System.out.println("Error i");
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            System.out.println("Error e");
+            e.printStackTrace();
+        }
+
+
+
+
+    }
 
     public void CrearMarcador(LatLng MiPosicion, String Titulo) {
         //mMap2.clear();
