@@ -63,11 +63,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }else { //No esta conectado
             Toast.makeText(MainActivity.this,"No hay conexion",Toast.LENGTH_SHORT).show();}
-        }//else if (connectivityManager.getNetworkInfo(0).getState()== NetworkInfo.State.DISCONNECTED||connectivityManager.getNetworkInfo(1).getState()== NetworkInfo.State.DISCONNECTED){
+        }
 
-        //}
-
-    //}
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to

@@ -313,7 +313,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         });
 
-
         System.out.println(gsson.toJson(ubicacion));
         Log.e("Envia",gsson.toJson(ubicacion));
         try {

@@ -46,6 +46,9 @@
             android:name=".MapsActivity_Seguimiento"
             android:label="@string/title_activity_maps_activity__seguimiento"></activity>
         <activity android:name=".CalificacionServicioActivity"></activity>
+
+
+
     </application>
 
 </manifest>
