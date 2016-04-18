@@ -14,8 +14,11 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.speech.tts.Voice;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -35,7 +38,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -64,11 +74,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
-String LatAmbulancia ="b";
-    String LongAmbulancia ="a";
-    String IdAmbulancia ="";
-    public ProgressDialog progress;
-
+    ProgressDialog progress;
+   // ProgressDialog progress ;
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
 
@@ -79,6 +86,10 @@ String LatAmbulancia ="b";
                 .findFragmentById(R.id.map1);
         mapFragment.getMapAsync(this);
         cnt=this;
+     //   final ProgressDialog progress = new ProgressDialog(this);
+        progress = new ProgressDialog(this);
+        progress.setTitle("Enviando emergencia");
+        progress.setMessage("Por favor espere");
         locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
         //this to set delegate/listener back to this class
 
@@ -154,16 +165,85 @@ String LatAmbulancia ="b";
                 else if(rGrpNumPacientes.getCheckedRadioButtonId()== -1)
                     {escoja_num_pacientes.show();}
                 else
-                { CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
+                {
+                  //  progress.show();
+/*                    ubicacionPaciente.setIdPaciente("Sadainer");
+                    ubicacionPaciente.setLatitud(posicionActual.getLatitude());
+                    ubicacionPaciente.setLongitud(posicionActual.getLongitude());
+                    ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
+                    EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
+*/
+
+
+                    Runnable progressRunnable = new Runnable() {
+
+                        @Override
+                        public void run() {
+                            ubicacionPaciente.setIdPaciente("Sadainer");
+                            ubicacionPaciente.setLatitud(posicionActual.getLatitude());
+                            ubicacionPaciente.setLongitud(posicionActual.getLongitude());
+                            ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
+                            EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
+                        }
+                    };
+                    Handler pdCanceller = new Handler();
+                    pdCanceller.postDelayed(progressRunnable, 3000);
+
+                    progress.show();
+  /*                  ubicacionPaciente.setIdPaciente("Sadainer");
+                    ubicacionPaciente.setLatitud(posicionActual.getLatitude());
+                    ubicacionPaciente.setLongitud(posicionActual.getLongitude());
+                    ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
+
+                    EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
+*/
+                   // progress.onStart();
+              /*      progress.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface dialog) {
+                            EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
+
+                            Log.e("Mostrandoprogress", "hola");
+                        }
+                    });
+          //          progress.show();
+*/
+
+/*
+                    CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
                     dialog.show();
                     dialog.setTitle("Enviar Emergencia?");
                     dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
 
+
+                            progress.setOnShowListener(new DialogInterface.OnShowListener() {
+                                @Override
+                                public void onShow(DialogInterface dialog) {
+
+                                    ubicacionPaciente.setIdPaciente("Sadainer");
+                                    ubicacionPaciente.setLatitud(posicionActual.getLatitude());
+                                    ubicacionPaciente.setLongitud(posicionActual.getLongitude());
+                                    ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
+                                    EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
+                                    //
+
+                                    Log.e("Mostrandoprogress", "hola");
+
+
+                                }
+                            });
+
+                            progress.show();
+                       //     EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
+
+
                         }
                     });
+           */
             }
+
         }
     });
             }
@@ -191,24 +271,52 @@ String LatAmbulancia ="b";
 
         @Override
         public void onClick(View v) {
-if (v==btnsalir){
-cancel();
+        if (v==btnsalir){
+        cancel();
+
+        }else {
+                // Pulso boton Enviar
+
+                dismiss();
 
 
-}else {
-// Pulso boton Enviar
+/*
+            ubicacionPaciente.setIdPaciente("Sadainer");
+            ubicacionPaciente.setLatitud(posicionActual.getLatitude());
+            ubicacionPaciente.setLongitud(posicionActual.getLongitude());
+            ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
+            EnviarUbicacion(ubicacionPaciente,mActivity);
+  */
+/*
+            progress = new ProgressDialog(mActivity);
+            progress.setTitle("Enviando emergencia");
+            progress.setMessage("Por favor espere");
 
-    //progress = ProgressDialog.show(mActivity, "Enviando Emergencia",
-      //      "Por favor espere", true);
-    ubicacionPaciente.setIdPaciente("Sadainer");
-    ubicacionPaciente.setLatitud(posicionActual.getLatitude());
-    ubicacionPaciente.setLongitud(posicionActual.getLongitude());
-    ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
+            progress.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
 
-    EnviarUbicacion(ubicacionPaciente, mActivity);
-}
+                    Log.e("Mostrandoprogress", "hola");
+                }
+            });
+            progress.show();
+            //new Thread(new Runnable() {
+              //  public void run() {
+                    //Aquí ejecutamos nuestras tareas costosas
+    //        EnviarUbicacion(ubicacionPaciente,mActivity);
+               //               progress = ProgressDialog.show(mActivity, "Enviando Emergencia",
+                 //                   "Por favor espere", true);
+            Log.e("Enviando ubicacion","ubicacion en thread");
+                //}
+            //}).start();
+              //  EnviarUbicacion(ubicacionPaciente,mActivity);
+
+*/
+            }
+         }
         }
-}
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -263,10 +371,13 @@ cancel();
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(final UbicacionPacienteDto ubicacion, final Context context)  {
 
+
         PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), context,
+
                 new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
+                progress.dismiss();
                 Toast.makeText(cnt,"output:"+ output, Toast.LENGTH_LONG).show();
 
                 Log.e("output",output);
@@ -290,6 +401,7 @@ cancel();
         System.out.println(gsson.toJson(ubicacion));
         Log.e("Envia",gsson.toJson(ubicacion));
         try {
+
             EnviarUbicacionAsyn.execute(DIR_URL + "PedidoAmbulancia").get();
 
         } catch (InterruptedException e) {
@@ -300,7 +412,6 @@ cancel();
             e.printStackTrace();
         }
     }
-
 
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
     //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
@@ -322,4 +433,5 @@ cancel();
 
         }
     }
+
 }
