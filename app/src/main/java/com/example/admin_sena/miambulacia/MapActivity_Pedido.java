@@ -166,82 +166,34 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     {escoja_num_pacientes.show();}
                 else
                 {
-                  //  progress.show();
-/*                    ubicacionPaciente.setIdPaciente("Sadainer");
-                    ubicacionPaciente.setLatitud(posicionActual.getLatitude());
-                    ubicacionPaciente.setLongitud(posicionActual.getLongitude());
-                    ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-                    EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
-*/
 
-
-                    Runnable progressRunnable = new Runnable() {
-
-                        @Override
-                        public void run() {
-                            ubicacionPaciente.setIdPaciente("Sadainer");
-                            ubicacionPaciente.setLatitud(posicionActual.getLatitude());
-                            ubicacionPaciente.setLongitud(posicionActual.getLongitude());
-                            ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-                            EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
-                        }
-                    };
-                    Handler pdCanceller = new Handler();
-                    pdCanceller.postDelayed(progressRunnable, 3000);
-
-                    progress.show();
-  /*                  ubicacionPaciente.setIdPaciente("Sadainer");
-                    ubicacionPaciente.setLatitud(posicionActual.getLatitude());
-                    ubicacionPaciente.setLongitud(posicionActual.getLongitude());
-                    ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-
-                    EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
-*/
-                   // progress.onStart();
-              /*      progress.setOnShowListener(new DialogInterface.OnShowListener() {
-                        @Override
-                        public void onShow(DialogInterface dialog) {
-                            EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
-
-                            Log.e("Mostrandoprogress", "hola");
-                        }
-                    });
-          //          progress.show();
-*/
-
-/*
                     CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
                     dialog.show();
                     dialog.setTitle("Enviar Emergencia?");
+
                     dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
+                            Runnable progressRunnable = new Runnable() {
 
-
-                            progress.setOnShowListener(new DialogInterface.OnShowListener() {
                                 @Override
-                                public void onShow(DialogInterface dialog) {
-
+                                public void run() {
                                     ubicacionPaciente.setIdPaciente("Sadainer");
                                     ubicacionPaciente.setLatitud(posicionActual.getLatitude());
                                     ubicacionPaciente.setLongitud(posicionActual.getLongitude());
                                     ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
                                     EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
-                                    //
-
-                                    Log.e("Mostrandoprogress", "hola");
-
-
                                 }
-                            });
-
+                            };
+                            Handler pdCanceller = new Handler();
+                            pdCanceller.postDelayed(progressRunnable, 2000);
+                            ///////////////Mostrar Progress Dialog
                             progress.show();
-                       //     EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
 
 
                         }
                     });
-           */
+
             }
 
         }
@@ -276,47 +228,11 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         }else {
                 // Pulso boton Enviar
-
                 dismiss();
 
-
-/*
-            ubicacionPaciente.setIdPaciente("Sadainer");
-            ubicacionPaciente.setLatitud(posicionActual.getLatitude());
-            ubicacionPaciente.setLongitud(posicionActual.getLongitude());
-            ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-            EnviarUbicacion(ubicacionPaciente,mActivity);
-  */
-/*
-            progress = new ProgressDialog(mActivity);
-            progress.setTitle("Enviando emergencia");
-            progress.setMessage("Por favor espere");
-
-            progress.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialog) {
-                    EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
-
-                    Log.e("Mostrandoprogress", "hola");
-                }
-            });
-            progress.show();
-            //new Thread(new Runnable() {
-              //  public void run() {
-                    //Aquí ejecutamos nuestras tareas costosas
-    //        EnviarUbicacion(ubicacionPaciente,mActivity);
-               //               progress = ProgressDialog.show(mActivity, "Enviando Emergencia",
-                 //                   "Por favor espere", true);
-            Log.e("Enviando ubicacion","ubicacion en thread");
-                //}
-            //}).start();
-              //  EnviarUbicacion(ubicacionPaciente,mActivity);
-
-*/
-            }
+         }
          }
         }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -397,7 +313,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         });
 
-        //progress.dismiss();
+
         System.out.println(gsson.toJson(ubicacion));
         Log.e("Envia",gsson.toJson(ubicacion));
         try {
