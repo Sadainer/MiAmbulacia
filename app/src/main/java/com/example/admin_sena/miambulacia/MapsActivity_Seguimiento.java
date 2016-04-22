@@ -52,20 +52,19 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         cnt=this;
         Button btnCancelarPedido = (Button)findViewById(R.id.btnCancelarPedido);
         final TextView mostrar = (TextView)findViewById(R.id.txtmostrar);
-        final   Intent a = getIntent();
+
 
         btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = a.getExtras();
 
-                mostrar.setText("Id: "+ bundle.getString("IdAmbulancia")+ "Ubicacion ambulancia: " + bundle.getString("LatAmbulancia") + bundle.getString("LongAmbulancia") + "MiUbicacion: " + String.valueOf(bundle.getDouble("MiLatitud")) + String.valueOf(bundle.getDouble("MiLongitud")));
+//Toast.makeText(MapsActivity_Seguimiento.this,"Parcelable: "+"Latitud "+String.valueOf(miUbicacion.getLatitud())+"Longitud: "+String.valueOf(miUbicacion.getLongitud()),Toast.LENGTH_SHORT).show();
             }
         });
     /*    btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-/////
+                /////
                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
                 DialogoCalificarServicio dialogoCalificarServicio = new DialogoCalificarServicio();
                 dialogoCalificarServicio.show(fragmentManager, "tagCalificarServicio");
@@ -80,8 +79,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     public void onMapReady(GoogleMap googleMap) {
         //SharedPreferences prefss = getSharedPreferences("prefUbicacion",MODE_PRIVATE);
 
-        Intent a = this.getIntent();
-        LatLng MiPosicion = new LatLng(a.getDoubleExtra("MiLatitud",0),a.getDoubleExtra("MiLongitud",0));
+        Intent a = getIntent();
+        UbicacionPacienteDto miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
+        LatLng MiPosicion = new LatLng(miUbicacion.getLatitud(),miUbicacion.getLongitud());
         LatLng PosicionAmbulancia= new LatLng(a.getDoubleExtra("LatAmbulancia",0),a.getDoubleExtra("LongAmbulancia",0));
         mMap2 = googleMap;
         mMap2.setMyLocationEnabled(true);
@@ -129,15 +129,13 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         PostAsyncrona Actualizar = new PostAsyncrona(actjson.toJson(ubicacionPacienteDto), MapsActivity_Seguimiento.this, new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
-Toast.makeText(MapsActivity_Seguimiento.this,output,Toast.LENGTH_SHORT).show();
+        Toast.makeText(MapsActivity_Seguimiento.this,output,Toast.LENGTH_SHORT).show();
                 Log.e("OutputActualizar",output);
             }
         });
 
-
         try {
              Actualizar.execute(DIR_URL + bundle.getString("IdAmbulancia")).get();
-
         } catch (InterruptedException e) {
             System.out.println("Error i");
             e.printStackTrace();
@@ -145,9 +143,6 @@ Toast.makeText(MapsActivity_Seguimiento.this,output,Toast.LENGTH_SHORT).show();
             System.out.println("Error e");
             e.printStackTrace();
         }
-
-
-
 
     }
 

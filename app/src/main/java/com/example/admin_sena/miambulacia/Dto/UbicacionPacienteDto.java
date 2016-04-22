@@ -1,5 +1,7 @@
 package com.example.admin_sena.miambulacia.Dto;
 
+
+
 import java.io.Serializable;
 
 
@@ -14,10 +16,13 @@ public class UbicacionPacienteDto implements Serializable {
     private int NumeroPacientes;
     private String Direccion;
 
-    public String getDireccion() {
 
-        return Direccion;
-    }
+
+
+
+
+
+
 
     public void setDireccion(String direccion) {
         Direccion = direccion;
@@ -62,7 +67,6 @@ public class UbicacionPacienteDto implements Serializable {
     public void setLongitud(Double longitud) {
         Longitud = longitud;
     }
-
 
 
 }

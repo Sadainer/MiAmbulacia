@@ -306,6 +306,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     //guardar variables en intent
                     i.putExtra("LatAmbulancia",outputtojson.getLatitud()).putExtra("LongAmbulancia",outputtojson.getLongitud());
                     i.putExtra("MiLatitud",ubicacion.getLatitud()).putExtra("MiLongitud",ubicacion.getLongitud());
+                    i.putExtra("ab",ubicacion);
                     startActivity(i);
                 }
 
