@@ -31,8 +31,6 @@ import java.util.concurrent.ExecutionException;
 public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap2;
-//    private static String DIR_URL1 = "http://190.109.185.138:8013/api/";
-    final Gson gsson = new Gson();
     private static String DIR_URL = "http://190.109.185.138:8013/api/UbicacionAmbulancias/";
     Context cnt;
     Timer timer;
@@ -77,7 +75,6 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        //SharedPreferences prefss = getSharedPreferences("prefUbicacion",MODE_PRIVATE);
 
         Intent a = getIntent();
         UbicacionPacienteDto miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
@@ -113,7 +110,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                 handler.post(new Runnable() {
                     public void run() {
                         //get the current timeStamp
-
+                        Intent a = getIntent();
+                        UbicacionPacienteDto miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
+                        ActualizarUbicacionAmbulancias(miUbicacion);
                     }
                 });
             }
@@ -125,17 +124,18 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 
     private void ActualizarUbicacionAmbulancias(UbicacionPacienteDto ubicacionPacienteDto){
         final   Intent a = getIntent();
-        Bundle bundle = a.getExtras();
+
         PostAsyncrona Actualizar = new PostAsyncrona(actjson.toJson(ubicacionPacienteDto), MapsActivity_Seguimiento.this, new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
-        Toast.makeText(MapsActivity_Seguimiento.this,output,Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity_Seguimiento.this,output,Toast.LENGTH_SHORT).show();
                 Log.e("OutputActualizar",output);
             }
         });
 
         try {
-             Actualizar.execute(DIR_URL + bundle.getString("IdAmbulancia")).get();
+             Actualizar.execute(DIR_URL + a.getStringExtra("IdAmbulancia")).get();
+             Log.e("URL +ID: ",DIR_URL + a.getStringExtra("IdAmbulancia"));
         } catch (InterruptedException e) {
             System.out.println("Error i");
             e.printStackTrace();
