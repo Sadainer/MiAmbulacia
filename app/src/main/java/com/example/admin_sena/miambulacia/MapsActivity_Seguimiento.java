@@ -26,6 +26,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
@@ -133,20 +135,21 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         try {
             String resultado =  Actualizar.execute(DIR_URL + a.getStringExtra("IdAmbulancia")).get();
 
-            Log.e("URL +ID: ",DIR_URL + a.getStringExtra("IdAmbulancia"));
+            Log.e("URL +ID: ", DIR_URL + a.getStringExtra("IdAmbulancia"));
             Log.e("Resultado", resultado);
             Toast.makeText(MapsActivity_Seguimiento.this,resultado,Toast.LENGTH_SHORT).show();
              //jsson =  jsson.toJson(resultado);
-//            UbicacionParamedicoDto ubicacionParamedicoDto =jsson.fromJson(resultado,UbicacionParamedicoDto.class);
+            UbicacionParamedicoDto ubicacionParamedicoDto = jsson.fromJson(resultado, UbicacionParamedicoDto.class);
+LatLng posicionAmbu = new LatLng(ubicacionParamedicoDto.getLatitud(),ubicacionParamedicoDto.getLongitud());
+            CrearMarcador(posicionAmbu,"Ambulancia");
 
 
-
-  /*          if (ubicacionParamedicoDto!=null){
+            if (ubicacionParamedicoDto!=null){
                 Log.e("ubicacionparamedico","exito");
             }else{
                 Log.e("ubicacionparamedico","null");
             }
-    */
+
         } catch (InterruptedException e) {
             System.out.println("Error i");
             e.printStackTrace();

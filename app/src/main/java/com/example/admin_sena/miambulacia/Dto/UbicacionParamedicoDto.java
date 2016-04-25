@@ -8,7 +8,7 @@ import java.util.Date;
 public class UbicacionParamedicoDto {
     int UbicacionAmbulancia;
     String Cedula;
-    Date Fecha;
+    String Fecha;
     Double Latitud;
     Double Longitud;
     String paramedicos;
@@ -29,11 +29,11 @@ public class UbicacionParamedicoDto {
         Cedula = cedula;
     }
 
-    public Date getFecha() {
+    public String getFecha() {
         return Fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(String fecha) {
         Fecha = fecha;
     }
 

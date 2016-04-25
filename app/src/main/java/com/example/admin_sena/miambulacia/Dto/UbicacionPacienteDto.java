@@ -19,11 +19,6 @@ public class UbicacionPacienteDto implements Serializable {
 
 
 
-
-
-
-
-
     public void setDireccion(String direccion) {
         Direccion = direccion;
     }
