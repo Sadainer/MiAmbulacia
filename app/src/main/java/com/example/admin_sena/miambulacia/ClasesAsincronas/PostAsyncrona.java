@@ -3,6 +3,7 @@ package com.example.admin_sena.miambulacia.ClasesAsincronas;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -20,7 +21,9 @@ import java.net.URL;
 public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
     public interface AsyncResponse {
+
         void processFinish(String output);
+
     }
 
     public AsyncResponse delegate = null;
@@ -36,6 +39,7 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
         cnt= context;
         this.delegate = delegate;
         prgEnviando = new ProgressDialog(context);
+
     }
     public void execute() {
         // TODO Auto-generated method stub
@@ -50,11 +54,14 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     protected void onPreExecute() {
 
 
-        this.prgEnviando.setTitle("MyAmbu");
-        this.prgEnviando.setMessage("Enviando ...");
-        this.prgEnviando.show();
-
+      /*  prgEnviando.setTitle("MyAmbu");
+        prgEnviando.setMessage("Enviando ...");
+        Log.e("Onpreexecute", "Onpreexecute");
+        prgEnviando.show();
+*/
     }
+
+
 
     @Override
     protected String doInBackground(String... params) {
@@ -78,10 +85,11 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
             StringBuilder sb = null;
             BufferedReader br = null;
             //here is the problem
+            sb = new StringBuilder();
             int responseCode=connection.getResponseCode();
             if(responseCode==HttpURLConnection.HTTP_OK){
                 String line;
-                sb = new StringBuilder();
+                //sb = new StringBuilder();
 
                 InputStream is = connection.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is,"UTF-8");
@@ -104,11 +112,13 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
             e.printStackTrace();
         }
         return mensajeRespuesta;
+
     }
 
     @Override
     protected void onPostExecute(String result) {
         delegate.processFinish(result);
-        this.prgEnviando.dismiss();
+     //   prgEnviando.dismiss();
+        Log.e("OnpostExecute","onpost");
     }
 }

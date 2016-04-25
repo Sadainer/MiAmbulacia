@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
+import com.example.admin_sena.miambulacia.Dto.ParamedicoDto;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -299,14 +300,15 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 Log.e("output",output);
 
                 if (output!=""){
-                 UbicacionPacienteDto outputtojson = gsson.fromJson(output,UbicacionPacienteDto.class);
+                 ParamedicoDto outputtojson = gsson.fromJson(output, ParamedicoDto.class);
 
                     finish();
                     Intent i = new Intent(context,MapsActivity_Seguimiento.class);
                     //guardar variables en intent
                     i.putExtra("LatAmbulancia",outputtojson.getLatitud()).putExtra("LongAmbulancia",outputtojson.getLongitud());
                     i.putExtra("MiLatitud",ubicacion.getLatitud()).putExtra("MiLongitud",ubicacion.getLongitud());
-                    i.putExtra("IdAmbulancia",outputtojson.getIdPaciente());
+                    i.putExtra("IdAmbulancia", outputtojson.getCedula());
+                    Log.e("Idambulanciarecibido", outputtojson.getCedula());
                     i.putExtra("ab",ubicacion);
 
                     startActivity(i);

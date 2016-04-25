@@ -14,8 +14,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.admin_sena.miambulacia.ClasesAsincronas.GetAsyncrona;
 import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
+import com.example.admin_sena.miambulacia.Dto.UbicacionParamedicoDto;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,7 +37,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     Context cnt;
     Timer timer;
     TimerTask timerTask;
-    Gson actjson = new Gson();
+    Gson jsson = new Gson();
     final Handler handler = new Handler();
 
     @Override
@@ -111,8 +113,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                     public void run() {
                         //get the current timeStamp
                         Intent a = getIntent();
-                        UbicacionPacienteDto miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
-                        ActualizarUbicacionAmbulancias(miUbicacion);
+
+                        ActualizarUbicacionAmbulancias();
                     }
                 });
             }
@@ -122,20 +124,29 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 
 //Actualizar posicion ambulancia
 
-    private void ActualizarUbicacionAmbulancias(UbicacionPacienteDto ubicacionPacienteDto){
+    private void ActualizarUbicacionAmbulancias(){
         final   Intent a = getIntent();
 
-        PostAsyncrona Actualizar = new PostAsyncrona(actjson.toJson(ubicacionPacienteDto), MapsActivity_Seguimiento.this, new PostAsyncrona.AsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                Toast.makeText(MapsActivity_Seguimiento.this,output,Toast.LENGTH_SHORT).show();
-                Log.e("OutputActualizar",output);
-            }
-        });
+
+        GetAsyncrona Actualizar = new GetAsyncrona();
 
         try {
-             Actualizar.execute(DIR_URL + a.getStringExtra("IdAmbulancia")).get();
-             Log.e("URL +ID: ",DIR_URL + a.getStringExtra("IdAmbulancia"));
+            String resultado =  Actualizar.execute(DIR_URL + a.getStringExtra("IdAmbulancia")).get();
+
+            Log.e("URL +ID: ",DIR_URL + a.getStringExtra("IdAmbulancia"));
+            Log.e("Resultado", resultado);
+            Toast.makeText(MapsActivity_Seguimiento.this,resultado,Toast.LENGTH_SHORT).show();
+             //jsson =  jsson.toJson(resultado);
+//            UbicacionParamedicoDto ubicacionParamedicoDto =jsson.fromJson(resultado,UbicacionParamedicoDto.class);
+
+
+
+  /*          if (ubicacionParamedicoDto!=null){
+                Log.e("ubicacionparamedico","exito");
+            }else{
+                Log.e("ubicacionparamedico","null");
+            }
+    */
         } catch (InterruptedException e) {
             System.out.println("Error i");
             e.printStackTrace();
