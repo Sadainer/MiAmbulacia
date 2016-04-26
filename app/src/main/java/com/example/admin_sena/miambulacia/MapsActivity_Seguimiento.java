@@ -2,20 +2,15 @@ package com.example.admin_sena.miambulacia;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin_sena.miambulacia.ClasesAsincronas.GetAsyncrona;
-import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
 import com.example.admin_sena.miambulacia.Dto.UbicacionParamedicoDto;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,7 +21,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
-import org.json.JSONObject;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -41,7 +35,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     TimerTask timerTask;
     Gson jsson = new Gson();
     final Handler handler = new Handler();
-
+    UbicacionPacienteDto miUbicacion = new UbicacionPacienteDto();
+    LatLng MiPosicion = new LatLng(0,0);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +48,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         mapFragment.getMapAsync(this);
         cnt=this;
         Button btnCancelarPedido = (Button)findViewById(R.id.btnCancelarPedido);
-        final TextView mostrar = (TextView)findViewById(R.id.txtmostrar);
+       // final TextView mostrar = (TextView)findViewById(R.id.txtmostrar);
 
 
         btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
@@ -81,14 +76,16 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     public void onMapReady(GoogleMap googleMap) {
 
         Intent a = getIntent();
-        UbicacionPacienteDto miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
-        LatLng MiPosicion = new LatLng(miUbicacion.getLatitud(),miUbicacion.getLongitud());
+        miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
+        if (miUbicacion != null) {
+            MiPosicion = new LatLng(miUbicacion.getLatitud(),miUbicacion.getLongitud());
+        }
         LatLng PosicionAmbulancia= new LatLng(a.getDoubleExtra("LatAmbulancia",0),a.getDoubleExtra("LongAmbulancia",0));
         mMap2 = googleMap;
         mMap2.setMyLocationEnabled(true);
 
-        CrearMarcador(MiPosicion, "Mi Posicion");
-        CrearMarcador(PosicionAmbulancia, "Ambulancia");
+        CrearMarcador(MiPosicion, "Mi Posicion",PosicionAmbulancia, "Ambulancia");
+        //CrearMarcador(PosicionAmbulancia, "Ambulancia");
 
     }
 
@@ -114,7 +111,6 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                 handler.post(new Runnable() {
                     public void run() {
                         //get the current timeStamp
-                        Intent a = getIntent();
 
                         ActualizarUbicacionAmbulancias();
                     }
@@ -140,15 +136,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             Toast.makeText(MapsActivity_Seguimiento.this,resultado,Toast.LENGTH_SHORT).show();
              //jsson =  jsson.toJson(resultado);
             UbicacionParamedicoDto ubicacionParamedicoDto = jsson.fromJson(resultado, UbicacionParamedicoDto.class);
-LatLng posicionAmbu = new LatLng(ubicacionParamedicoDto.getLatitud(),ubicacionParamedicoDto.getLongitud());
-            CrearMarcador(posicionAmbu,"Ambulancia");
+            LatLng posicionAmbu = new LatLng(ubicacionParamedicoDto.getLatitud(),ubicacionParamedicoDto.getLongitud());
+            CrearMarcador(MiPosicion, "Mi Posicion",posicionAmbu, "Ambulancia");
 
-
-            if (ubicacionParamedicoDto!=null){
-                Log.e("ubicacionparamedico","exito");
-            }else{
-                Log.e("ubicacionparamedico","null");
-            }
 
         } catch (InterruptedException e) {
             System.out.println("Error i");
@@ -160,12 +150,14 @@ LatLng posicionAmbu = new LatLng(ubicacionParamedicoDto.getLatitud(),ubicacionPa
 
     }
 
-    public void CrearMarcador(LatLng MiPosicion, String Titulo) {
-        //mMap2.clear();
+    public void CrearMarcador(LatLng MiPosicion, String Titulo, LatLng PosAmbulancia, String Titulo2) {
+        mMap2.clear();
         mMap2.addMarker(new MarkerOptions()
-
                 .position(MiPosicion)
                 .title(Titulo));
+        mMap2.addMarker(new MarkerOptions()
+                .position(PosAmbulancia)
+                .title(Titulo2));
         mMap2.moveCamera(CameraUpdateFactory.newLatLng(MiPosicion));
         mMap2.animateCamera(CameraUpdateFactory.newLatLngZoom(MiPosicion, 14.0f));
     }
