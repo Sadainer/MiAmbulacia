@@ -86,6 +86,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             mMap2.addMarker(new MarkerOptions()
                     .position(MiPosicion)
                     .title("Mi ubicacion"));
+            mMap2.moveCamera(CameraUpdateFactory.newLatLng(MiPosicion));
+            mMap2.animateCamera(CameraUpdateFactory.newLatLngZoom(MiPosicion, 14.0f));
 
         }
         LatLng PosicionAmbulancia= new LatLng(a.getDoubleExtra("LatAmbulancia",0),a.getDoubleExtra("LongAmbulancia",0));
