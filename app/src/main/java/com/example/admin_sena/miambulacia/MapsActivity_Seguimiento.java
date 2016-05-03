@@ -18,6 +18,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
@@ -37,6 +38,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     final Handler handler = new Handler();
     UbicacionPacienteDto miUbicacion = new UbicacionPacienteDto();
     LatLng MiPosicion = new LatLng(0,0);
+    Marker marcadorAmbulancia;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,20 +77,24 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+        mMap2 = googleMap;
+        mMap2.setMyLocationEnabled(true);
         Intent a = getIntent();
         miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
         if (miUbicacion != null) {
             MiPosicion = new LatLng(miUbicacion.getLatitud(),miUbicacion.getLongitud());
+            mMap2.addMarker(new MarkerOptions()
+                    .position(MiPosicion)
+                    .title("Mi ubicacion"));
+
         }
         LatLng PosicionAmbulancia= new LatLng(a.getDoubleExtra("LatAmbulancia",0),a.getDoubleExtra("LongAmbulancia",0));
-        mMap2 = googleMap;
-        mMap2.setMyLocationEnabled(true);
 
-        CrearMarcador(MiPosicion, "Mi Posicion",PosicionAmbulancia, "Ambulancia");
+
+        //CrearMarcador(MiPosicion, "Mi Posicion",PosicionAmbulancia, "Ambulancia");
         //CrearMarcador(PosicionAmbulancia, "Ambulancia");
 
     }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -119,12 +125,10 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         };
     }
 
-
-//Actualizar posicion ambulancia
+///////////////////Actualizar posicion ambulancia//////////////////////////////////////////////////
 
     private void ActualizarUbicacionAmbulancias(){
         final   Intent a = getIntent();
-
 
         GetAsyncrona Actualizar = new GetAsyncrona();
 
@@ -137,8 +141,16 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
              //jsson =  jsson.toJson(resultado);
             UbicacionParamedicoDto ubicacionParamedicoDto = jsson.fromJson(resultado, UbicacionParamedicoDto.class);
             LatLng posicionAmbu = new LatLng(ubicacionParamedicoDto.getLatitud(),ubicacionParamedicoDto.getLongitud());
-            CrearMarcador(MiPosicion, "Mi Posicion",posicionAmbu, "Ambulancia");
 
+            if (marcadorAmbulancia!=null){
+                marcadorAmbulancia.remove();
+                marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu));
+
+            }else {
+                marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu));
+            }
+
+            //CrearMarcador(MiPosicion, "Mi Posicion",posicionAmbu, "Ambulancia");
 
         } catch (InterruptedException e) {
             System.out.println("Error i");
@@ -147,7 +159,6 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             System.out.println("Error e");
             e.printStackTrace();
         }
-
     }
 
     public void CrearMarcador(LatLng MiPosicion, String Titulo, LatLng PosAmbulancia, String Titulo2) {
