@@ -154,7 +154,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                 marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu));
                 // agregar polilinea
                 PolylineOptions Polilinea =new PolylineOptions().add(posicionAmbu).add(MiPosicion);
-                mMap2.addPolyline(Polilinea);
+                mMap2.addPolyline(Polilinea);///////////
 
             }
 
