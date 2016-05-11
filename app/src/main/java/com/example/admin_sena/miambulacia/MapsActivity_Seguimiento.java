@@ -20,6 +20,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 
 
@@ -80,7 +82,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         mMap2 = googleMap;
         mMap2.setMyLocationEnabled(true);
         Intent a = getIntent();
-        miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
+         miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
         if (miUbicacion != null) {
             MiPosicion = new LatLng(miUbicacion.getLatitud(),miUbicacion.getLongitud());
             mMap2.addMarker(new MarkerOptions()
@@ -144,13 +146,18 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             UbicacionParamedicoDto ubicacionParamedicoDto = jsson.fromJson(resultado, UbicacionParamedicoDto.class);
             LatLng posicionAmbu = new LatLng(ubicacionParamedicoDto.getLatitud(),ubicacionParamedicoDto.getLongitud());
 
-            if (marcadorAmbulancia!=null){
+            if (marcadorAmbulancia!=null){          /////El marcador ya se dibujo por primera vez y debe borrarse para dibujar otro.
                 marcadorAmbulancia.remove();
                 marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu));
 
             }else {
                 marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu));
+                // agregar polilinea
+                PolylineOptions Polilinea =new PolylineOptions().add(posicionAmbu).add(MiPosicion);
+                mMap2.addPolyline(Polilinea);
+
             }
+
 
             //CrearMarcador(MiPosicion, "Mi Posicion",posicionAmbu, "Ambulancia");
 
