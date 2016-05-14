@@ -1,8 +1,12 @@
 package com.example.admin_sena.miambulacia;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,6 +45,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     UbicacionPacienteDto miUbicacion = new UbicacionPacienteDto();
     LatLng MiPosicion = new LatLng(0,0);
     Marker marcadorAmbulancia;
+    Location mylocation, ambuLocation;
+    AlertDialog alert;
+    AlertDialog irCalificar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,28 +59,37 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         mapFragment.getMapAsync(this);
         cnt=this;
         Button btnCancelarPedido = (Button)findViewById(R.id.btnCancelarPedido);
-       // final TextView mostrar = (TextView)findViewById(R.id.txtmostrar);
 
-
+        final String[] items = {"Me equivoque", "Llego otra ambulancia","ya no es necesario el servicio"};
         btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity_Seguimiento.this);
+                alert = builder.create();
+                builder.setTitle("Cancelar Emergencia") //
+                        //.setCancelable(false)
+                        .setMessage("Deseo cancelar la emergencia porque...")
+                        .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                alert.dismiss();
+                            }
+                        })
+                        .setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                alert.dismiss();
+                            }
+                        })
+                        .setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-//Toast.makeText(MapsActivity_Seguimiento.this,"Parcelable: "+"Latitud "+String.valueOf(miUbicacion.getLatitud())+"Longitud: "+String.valueOf(miUbicacion.getLongitud()),Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                builder.show();
+
             }
         });
-    /*    btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /////
-               android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-                DialogoCalificarServicio dialogoCalificarServicio = new DialogoCalificarServicio();
-                dialogoCalificarServicio.show(fragmentManager, "tagCalificarServicio");
-
-
-            }
-        });
-*/
     }
 
     @Override
@@ -85,6 +101,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
          miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
         if (miUbicacion != null) {
             MiPosicion = new LatLng(miUbicacion.getLatitud(),miUbicacion.getLongitud());
+            mylocation.setLatitude(miUbicacion.getLatitud());
+            mylocation.setLongitude(miUbicacion.getLongitud());
             mMap2.addMarker(new MarkerOptions()
                     .position(MiPosicion)
                     .title("Mi ubicacion"));
@@ -95,8 +113,6 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         LatLng PosicionAmbulancia= new LatLng(a.getDoubleExtra("LatAmbulancia",0),a.getDoubleExtra("LongAmbulancia",0));
 
 
-        //CrearMarcador(MiPosicion, "Mi Posicion",PosicionAmbulancia, "Ambulancia");
-        //CrearMarcador(PosicionAmbulancia, "Ambulancia");
 
     }
     @Override
@@ -145,6 +161,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
              //jsson =  jsson.toJson(resultado);
             UbicacionParamedicoDto ubicacionParamedicoDto = jsson.fromJson(resultado, UbicacionParamedicoDto.class);
             LatLng posicionAmbu = new LatLng(ubicacionParamedicoDto.getLatitud(),ubicacionParamedicoDto.getLongitud());
+            ambuLocation.setLongitude(ubicacionParamedicoDto.getLongitud());
+            ambuLocation.setLatitude(ubicacionParamedicoDto.getLatitud());
 
             if (marcadorAmbulancia!=null){          /////El marcador ya se dibujo por primera vez y debe borrarse para dibujar otro.
                 marcadorAmbulancia.remove();
@@ -155,11 +173,31 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                 // agregar polilinea
                 PolylineOptions Polilinea =new PolylineOptions().add(posicionAmbu).add(MiPosicion);
                 mMap2.addPolyline(Polilinea);///////////
-
+                double distancia = mylocation.distanceTo(ambuLocation);
+                if (distancia<20){
+                    timer.cancel();
+                    timerTask.cancel();
+                    AlertDialog.Builder builder2 = new AlertDialog.Builder(MapsActivity_Seguimiento.this);
+                    irCalificar = builder2.create();
+                    builder2.setTitle("Su ambulancia ha llegado")
+                            .setMessage("Desea calificar servicio?")
+                            .setCancelable(false).setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent irAcalificar= new Intent(MapsActivity_Seguimiento.this,CalificacionServicioActivity.class);
+                            startActivity(irAcalificar);
+                            finish();
+                        }
+                    }).setNegativeButton("No, Gracias", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent salir = new Intent(MapsActivity_Seguimiento.this,MapActivity_Pedido.class);
+                            startActivity(salir);
+                            finish();
+                        }
+                    });
+                }
             }
-
-
-            //CrearMarcador(MiPosicion, "Mi Posicion",posicionAmbu, "Ambulancia");
 
         } catch (InterruptedException e) {
             System.out.println("Error i");

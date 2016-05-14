@@ -34,7 +34,8 @@
     <string name="st_regular">Regular</string>
     <string name="st_malo">Malo</string>
     <string name="st_pesimo">Pesimo</string>
-
+    <string name="st_Titulo">Calificar Servicio</string>
+    <string name="st_Comentarios">Comentarios</string>
 
     <string name="title_activity_main2">Main2Activity</string>
 </resources>
