@@ -68,8 +68,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                 AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity_Seguimiento.this);
                 alert = builder.create();
                 builder.setTitle("Deseo cancelar la emergencia porque...") //
-                        //.setCancelable(false)
-
+                        .setCancelable(false)
                         .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 alert.dismiss();
