@@ -45,9 +45,10 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     UbicacionPacienteDto miUbicacion = new UbicacionPacienteDto();
     LatLng MiPosicion = new LatLng(0,0);
     Marker marcadorAmbulancia;
-    Location mylocation, ambuLocation;
+    Location mylocation = new Location("point b"), ambuLocation = new Location("point a");
     AlertDialog alert;
     AlertDialog irCalificar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,15 +61,15 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         cnt=this;
         Button btnCancelarPedido = (Button)findViewById(R.id.btnCancelarPedido);
 
-        final String[] items = {"Me equivoque", "Llego otra ambulancia","ya no es necesario el servicio"};
+        final String[] items = {"Me equivoque", "Llegó otra ambulancia","Ya no es necesario el servicio"};
         btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity_Seguimiento.this);
                 alert = builder.create();
-                builder.setTitle("Cancelar Emergencia") //
+                builder.setTitle("Deseo cancelar la emergencia porque...") //
                         //.setCancelable(false)
-                        .setMessage("Deseo cancelar la emergencia porque...")
+
                         .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 alert.dismiss();
@@ -101,6 +102,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
          miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
         if (miUbicacion != null) {
             MiPosicion = new LatLng(miUbicacion.getLatitud(),miUbicacion.getLongitud());
+
             mylocation.setLatitude(miUbicacion.getLatitud());
             mylocation.setLongitude(miUbicacion.getLongitud());
             mMap2.addMarker(new MarkerOptions()
@@ -173,7 +175,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                 // agregar polilinea
                 PolylineOptions Polilinea =new PolylineOptions().add(posicionAmbu).add(MiPosicion);
                 mMap2.addPolyline(Polilinea);///////////
-                double distancia = mylocation.distanceTo(ambuLocation);
+                float distancia = mylocation.distanceTo(ambuLocation);
                 if (distancia<20){
                     timer.cancel();
                     timerTask.cancel();
