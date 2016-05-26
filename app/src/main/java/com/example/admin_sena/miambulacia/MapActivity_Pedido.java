@@ -17,6 +17,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+
 
 public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback{
 
@@ -62,11 +64,13 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
-
-    public ProgressDialog a;
+String LatAmbulancia ="b";
+    String LongAmbulancia ="a";
+    String IdAmbulancia ="";
+    public ProgressDialog progress;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_activity__pedido);
@@ -78,7 +82,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
         //this to set delegate/listener back to this class
 
-       Criteria req = new Criteria();
+        Criteria req = new Criteria();
         req.setAccuracy(Criteria.ACCURACY_FINE);
         req.setAltitudeRequired(true);
 
@@ -100,7 +104,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         mapFragment.getMapAsync(this);
 
 
-        btnEnviarAlerta = (Button) findViewById(R.id.butPedirAmbulancia);
+        btnEnviarAlerta = (Button) findViewById(R.id.btnCancelarPedido);
         edtDireccion = (EditText) findViewById(R.id.edtDireccion);
         rGrpNumPacientes = (RadioGroup) findViewById(R.id.grpNumPaciente);
         rGrpTipoEmergencia = (RadioGroup) findViewById(R.id.grpTipEmergencia);
@@ -152,6 +156,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 else
                 { CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
                     dialog.show();
+                    dialog.setTitle("Enviar Emergencia?");
                     dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
@@ -162,10 +167,14 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         }
     });
             }
+
+
+
 ///Dialogo para validar envio de emergencia
-    public class CustomDialog extends Dialog implements View.OnClickListener {
+    public class CustomDialog extends Dialog implements View.OnClickListener  {
         Button SiEnviar, btnsalir;
         Activity mActivity;
+
         public CustomDialog(Activity activity) {
             super(activity);
             mActivity = activity;
@@ -177,32 +186,26 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             SiEnviar.setOnClickListener(this);
             btnsalir = (Button) findViewById(R.id.btn_no_salir);
             btnsalir.setOnClickListener(this);
+
         }
 
         @Override
         public void onClick(View v) {
 if (v==btnsalir){
 cancel();
-}else{
+
+
+}else {
 // Pulso boton Enviar
 
-
+    //progress = ProgressDialog.show(mActivity, "Enviando Emergencia",
+      //      "Por favor espere", true);
     ubicacionPaciente.setIdPaciente("Sadainer");
     ubicacionPaciente.setLatitud(posicionActual.getLatitude());
     ubicacionPaciente.setLongitud(posicionActual.getLongitude());
     ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-    Bundle a= new Bundle();
 
-    EnviarUbicacion(ubicacionPaciente);
-
-//    Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
-//    a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
-//    a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
-//    i.putExtras(a);
-//    mActivity.startActivity(i);
-
-    //Intent i = new Intent(mActivity, MapsActivity_Seguimiento.class);
-    //mActivity.startActivity(i);
+    EnviarUbicacion(ubicacionPaciente, mActivity);
 }
         }
 }
@@ -249,39 +252,73 @@ cancel();
                 String Direccion2 = Direccion.get(0).getAddressLine(0);
                 String[] separated = Direccion2.split("-");
                 String Direccion_incompleta = separated[0] + "-";
-                edtDireccion.setText(Direccion_incompleta);
-                int distancia = separated[0].length() +1;
-                edtDireccion.setSelection(distancia);
+            edtDireccion.setText(Direccion_incompleta);
+            int distancia = separated[0].length() +1;
+            edtDireccion.setSelection(distancia);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     //Metodo para enviar Ubicacion al servidor
-    private void EnviarUbicacion(UbicacionPacienteDto ubicacion){
-        a = ProgressDialog.show(this, "dialog title",
-                "dialog message", true);
-        PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), cnt,
+    private void EnviarUbicacion(UbicacionPacienteDto ubicacion, final Context context)  {
+
+        PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), context,
                 new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
-                Toast.makeText(cnt,output.toString(),Toast.LENGTH_LONG).show();
-            }
-        });
+                Toast.makeText(cnt, output, Toast.LENGTH_LONG).show();
+                //Mapeo de output para obtener Id y LatLng
+                String  output2  =   output.replace("{"," ").replace("}"," ");
+                String[] nuevo = output2.split(":");
+                String[] b = nuevo[1].split(",");
+                String[] b1 = nuevo[3].split(",");
+                String[] b2 = nuevo[4].split(",");
+                String IdAmbulancia = b[0];  //IdAmbulancia
+                LatAmbulancia= b1[0];
+                LongAmbulancia=b2[0];
+                Log.e("Latitud",LatAmbulancia);
+                Log.e("Longitud",LongAmbulancia);
 
+                Double k= Double.valueOf(IdAmbulancia) +6;
+                Log.e("IdAmbulanca+1",String.valueOf(k));
+
+                Log.e("outputmodificado", output);
+                for(String str : nuevo)
+                {
+                    Log.e("nuevoSt",str);
+                }
+
+                Bundle a = new Bundle();
+                Intent i = new Intent(context, MapsActivity_Seguimiento.class);
+                a.putDouble("MiLatitud",ubicacionPaciente.getLatitud());
+                a.putDouble("MiLongitud",ubicacionPaciente.getLongitud());
+                a.putString("LatAmbulancia", LatAmbulancia);
+                a.putString("LongAmbulancia", LongAmbulancia);
+                a.putString("IdAmbulancia", IdAmbulancia);
+                i.putExtras(a);
+             //   i.putExtra("ubicacionPaciente", ubicacionPaciente);
+                context.startActivity(i);
+          //      progress.dismiss();
+
+            }
+
+        });
+//
+        //progress.dismiss();
         System.out.println(gsson.toJson(ubicacion));
+Log.e("Envia",gsson.toJson(ubicacion));
         try {
             EnviarUbicacionAsyn.execute(DIR_URL + "PedidoAmbulancia").get();
+
         } catch (InterruptedException e) {
             System.out.println("Error i");
             e.printStackTrace();
         } catch (ExecutionException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error e");
             e.printStackTrace();
         }
-        a.dismiss();
     }
-
 
 
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
