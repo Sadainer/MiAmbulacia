@@ -209,16 +209,5 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         }
     }
 
-    public void CrearMarcador(LatLng MiPosicion, String Titulo, LatLng PosAmbulancia, String Titulo2) {
-        mMap2.clear();
-        mMap2.addMarker(new MarkerOptions()
-                .position(MiPosicion)
-                .title(Titulo));
-        mMap2.addMarker(new MarkerOptions()
-                .position(PosAmbulancia)
-                .title(Titulo2));
-        mMap2.moveCamera(CameraUpdateFactory.newLatLng(MiPosicion));
-        mMap2.animateCamera(CameraUpdateFactory.newLatLngZoom(MiPosicion, 14.0f));
-    }
 
 }
