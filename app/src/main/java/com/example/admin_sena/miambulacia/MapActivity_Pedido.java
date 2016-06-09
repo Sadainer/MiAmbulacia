@@ -53,6 +53,7 @@ import java.util.concurrent.ExecutionException;
 
 public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener{
 
+    // DIR_URL = "http://190.109.185.138:8013/api/Cancelar";
     private GoogleMap mMap;
     public GoogleApiClient mGoogleApiClient;
     Button btnEnviarAlerta;
@@ -351,13 +352,14 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), context,
 
                 new PostAsyncrona.AsyncResponse() {
-            @Override
-            public void processFinish(String output) {
+
+                @Override
+                public void processFinish(String output) {
                 progress.dismiss();
                 Toast.makeText(cnt,"output:"+ output, Toast.LENGTH_LONG).show();
                 Log.e("output",output);
                 if (!(output.equals(""))){
-                 ParamedicoDto outputtojson = gsson.fromJson(output, ParamedicoDto.class);
+                    ParamedicoDto outputtojson = gsson.fromJson(output, ParamedicoDto.class);
                     finish();
                     Intent i = new Intent(context,MapsActivity_Seguimiento.class);
                     //guardar variables en intent
