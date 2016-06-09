@@ -13,7 +13,7 @@
     <string name="st_tipo_emergencia">Tipo de emergencia</string>
     <string name="st_numero_pacientes">Numero de pacientes</string>
     <string name="st_btn_Pedir_ambulancia">Pedir Ambulancia</string>
-
+    <string name="st_historial">Historial de pedidos</string>
     <!--  strings Dialogo Enviar Emergencia  -->
 
     <string name="st_no_gracias">No, gracias</string>
