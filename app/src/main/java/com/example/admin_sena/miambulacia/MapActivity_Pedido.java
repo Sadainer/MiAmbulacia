@@ -3,12 +3,10 @@ package com.example.admin_sena.miambulacia;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -16,18 +14,15 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.speech.tts.Voice;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +33,6 @@ import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -46,18 +40,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-//import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 
 import com.google.gson.Gson;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
@@ -197,13 +184,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
 
-
-
-
-
-
-                /*
-
              //   final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
                 Toast escoja_num_pacientes = Toast.makeText(getApplication(),"Por favor elija un numero de pacientes",Toast.LENGTH_SHORT);
                 Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(),"Por favor elija un tipo de Emergencia",Toast.LENGTH_SHORT);
@@ -245,16 +225,16 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
             }
 
-        }*/
-            }
+        }
+
     });
             }
 
-
-
-
-
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_historial,menu);
+        return true;
+    }
 
     @Override
     protected void onStart() {
@@ -265,10 +245,9 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     @Override
     public void onConnected(Bundle bundle) {
      //   Toast.makeText(MapActivity_Pedido.this,"Conexion con api places EXITOSA",Toast.LENGTH_SHORT).show();
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            Toast.makeText(MapActivity_Pedido.this,"Location not null",Toast.LENGTH_SHORT).show();
-            CrearMarcador(mLastLocation,"milocation");
+        posicionActual = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (posicionActual != null) {
+            CrearMarcador(posicionActual,"milocation");
         }
 
     }
@@ -321,7 +300,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
-
+/*
         boolean network_enabled = locationMangaer.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         if (network_enabled) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -335,7 +314,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 //CrearMarcador(location, "Tu Ubicación");
 
             }
-        }
+        }*/
     }
 
     //metodo para crear marcadores
@@ -369,7 +348,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(final UbicacionPacienteDto ubicacion, final Context context)  {
 
-
         PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), context,
 
                 new PostAsyncrona.AsyncResponse() {
@@ -377,12 +355,9 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             public void processFinish(String output) {
                 progress.dismiss();
                 Toast.makeText(cnt,"output:"+ output, Toast.LENGTH_LONG).show();
-
                 Log.e("output",output);
-
-                if (output!=""){
+                if (!(output.equals(""))){
                  ParamedicoDto outputtojson = gsson.fromJson(output, ParamedicoDto.class);
-
                     finish();
                     Intent i = new Intent(context,MapsActivity_Seguimiento.class);
                     //guardar variables en intent
@@ -391,7 +366,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     i.putExtra("IdAmbulancia", outputtojson.getCedula());
                     Log.e("Idambulanciarecibido", outputtojson.getCedula());
                     i.putExtra("ab",ubicacion);
-
                     startActivity(i);
                 }
 
