@@ -5,6 +5,15 @@ package com.example.admin_sena.miambulacia.Dto;
  */
 public class CancelPedidoDto extends UbicacionPacienteDto{
     private String razonCancela;
+    private String IdAmbulanciaCancel;
+
+    public String getIdAmbulanciaCancel() {
+        return IdAmbulanciaCancel;
+    }
+
+    public void setIdAmbulanciaCancel(String idAmbulanciaCancel) {
+        IdAmbulanciaCancel = idAmbulanciaCancel;
+    }
 
     public String getRazonCancela() {
         return razonCancela;
