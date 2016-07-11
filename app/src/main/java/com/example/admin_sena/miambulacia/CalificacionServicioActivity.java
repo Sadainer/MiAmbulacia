@@ -3,49 +3,69 @@ package com.example.admin_sena.miambulacia;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RadioGroup;
+
+import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
+import com.example.admin_sena.miambulacia.Dto.CalificacionDto;
+import com.example.admin_sena.miambulacia.MapActivities.MapActivity_Pedido;
+import com.google.gson.Gson;
 
 public class CalificacionServicioActivity extends AppCompatActivity {
 
+    Gson jsson = new Gson();
+    RadioGroup radioGroup;
+    CalificacionDto calificacion;
+    public static final String URL_CALIFICAR = "http://190.109.185.138:8013/api/Calificar";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calificacion_servicio);
-        final RadioGroup radioGroup = (RadioGroup)findViewById(R.id.radioGroup3);
-        Button Enviar = (Button)findViewById(R.id.btnEnviarCalificacion);
-        Button noSalir = (Button)findViewById(R.id.but_no_gracias);
-        noSalir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CalificacionServicioActivity.this,MapActivity_Pedido.class);
-                startActivity(intent);
-                finish();
-
-            }
-        });
-        Enviar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent2 = new Intent(CalificacionServicioActivity.this,MapActivity_Pedido.class);
-                startActivity(intent2);
-                finish();
-                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup group, int checkedId) {
-                        if (checkedId==R.id.radExcelente){
-
-                        }else if (checkedId==R.id.radBueno){
-
-                        }else if (checkedId==R.id.radRegular){
-
-                        }else if (checkedId==R.id.radPesimo){
-
-                        }
-                    }
-                });
-            }
-        });
+        radioGroup = (RadioGroup)findViewById(R.id.radioGroup3);
+        String IdAmbulancia = getIntent().getStringExtra("IdAmbulancia");
+        calificacion = new CalificacionDto();
+        calificacion.setIdAmbulancia(IdAmbulancia);
+        calificacion.setIdPaciente("Oscar");
     }
+
+    public void salir(View v) {
+        Intent intent = new Intent(CalificacionServicioActivity.this,MapActivity_Pedido.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void enviarCalificacion(View v) {
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId==R.id.radExcelente){
+                    calificacion.setCalificacionServicio(5);
+                }else if (checkedId==R.id.radBueno){
+                    calificacion.setCalificacionServicio(4);
+                }else if (checkedId==R.id.radRegular){
+                    calificacion.setCalificacionServicio(3);
+                }else if (checkedId==R.id.radMalo){
+                    calificacion.setCalificacionServicio(2);
+                }else if (checkedId==R.id.radPesimo){
+                    calificacion.setCalificacionServicio(1);
+                }
+            }
+        });
+        PostAsyncrona enviar = new PostAsyncrona(jsson.toJson(calificacion), CalificacionServicioActivity.this, new PostAsyncrona.AsyncResponse() {
+            @Override
+            public void processFinish(String output) {
+                Log.e("EnvioCalificacion:",output);
+                if (output != null){
+                    Intent intent2 = new Intent(CalificacionServicioActivity.this, MapActivity_Pedido.class);
+                    startActivity(intent2);
+                    finish();
+                }
+            }
+        });
+        enviar.execute(URL_CALIFICAR);
+
+    }
+
+
 }

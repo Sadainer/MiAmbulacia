@@ -7,6 +7,11 @@ public class CancelPedidoDto extends UbicacionPacienteDto{
     private String RazonCancela;
     private String IdAmbulancia;
 
+    public CancelPedidoDto(String IdAmbulancia) {
+        this.IdAmbulancia = IdAmbulancia;
+
+    }
+
     public String getIdAmbulanciaCancel() {
         return IdAmbulancia;
     }

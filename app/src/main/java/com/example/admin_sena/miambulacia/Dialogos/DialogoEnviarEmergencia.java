@@ -1,4 +1,4 @@
-package com.example.admin_sena.miambulacia;
+package com.example.admin_sena.miambulacia.Dialogos;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

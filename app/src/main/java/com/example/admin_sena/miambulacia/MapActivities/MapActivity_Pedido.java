@@ -1,4 +1,4 @@
-package com.example.admin_sena.miambulacia;
+package com.example.admin_sena.miambulacia.MapActivities;
 
 import android.Manifest;
 import android.app.Activity;
@@ -17,6 +17,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.miambulacia.Dto.ParamedicoDto;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
+import com.example.admin_sena.miambulacia.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -39,6 +41,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.gson.Gson;
@@ -51,7 +54,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 
-public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener{
+public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
     public GoogleApiClient mGoogleApiClient;
@@ -79,9 +82,10 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     URL url;
     HttpURLConnection urlConnection;
     StringBuilder total;
-   // ProgressDialog progress ;
+
+    // ProgressDialog progress ;
     @Override
-    protected void onCreate(Bundle savedInstanceState)  {
+    protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_activity__pedido);
@@ -89,7 +93,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map1);
         mapFragment.getMapAsync(this);
-        if (mGoogleApiClient==null){
+        if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.
                     Builder(this)
                     .addApi(Places.GEO_DATA_API)
@@ -100,11 +104,11 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     .build();
         }
 
-        cnt=this;
-     //   Bundle extras = getIntent().getExtras();
-     //   Address[] direcciones = (Address[]) extras.get("Direcciones");
-     //   Toast.makeText(MapActivity_Pedido.this,"Clinica asignada: "+direcciones[0].getFeatureName(),Toast.LENGTH_LONG).show();
-     //   final ProgressDialog progress = new ProgressDialog(this);
+        cnt = this;
+        //   Bundle extras = getIntent().getExtras();
+        //   Address[] direcciones = (Address[]) extras.get("Direcciones");
+        //   Toast.makeText(MapActivity_Pedido.this,"Clinica asignada: "+direcciones[0].getFeatureName(),Toast.LENGTH_LONG).show();
+        //   final ProgressDialog progress = new ProgressDialog(this);
         progress = new ProgressDialog(this);
         progress.setTitle("Enviando emergencia");
         progress.setMessage("Por favor espere");
@@ -140,7 +144,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         }
         mapFragment.getMapAsync(this);
-
 
 
         btnEnviarAlerta = (Button) findViewById(R.id.btnCancelarPedido);
@@ -184,17 +187,17 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
 
-             //   final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
-                Toast escoja_num_pacientes = Toast.makeText(getApplication(),"Por favor elija un numero de pacientes",Toast.LENGTH_SHORT);
-                Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(),"Por favor elija un tipo de Emergencia",Toast.LENGTH_SHORT);
+                //   final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
+                Toast escoja_num_pacientes = Toast.makeText(getApplication(), "Por favor elija un numero de pacientes", Toast.LENGTH_SHORT);
+                Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(), "Por favor elija un tipo de Emergencia", Toast.LENGTH_SHORT);
                 //Validar tipo de emergencia
-                if(rGrpTipoEmergencia.getCheckedRadioButtonId()== -1)
-                    {escoja_tipo_emergencia.show();}
+                if (rGrpTipoEmergencia.getCheckedRadioButtonId() == -1) {
+                    escoja_tipo_emergencia.show();
+                }
                 //Validar Numero de pacientes
-                else if(rGrpNumPacientes.getCheckedRadioButtonId()== -1)
-                    {escoja_num_pacientes.show();}
-                else
-                {
+                else if (rGrpNumPacientes.getCheckedRadioButtonId() == -1) {
+                    escoja_num_pacientes.show();
+                } else {
 
                     CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
                     dialog.show();
@@ -223,16 +226,16 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                         }
                     });
 
+                }
+
             }
 
-        }
-
-    });
-            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_historial,menu);
+        getMenuInflater().inflate(R.menu.menu_historial, menu);
         return true;
     }
 
@@ -244,10 +247,12 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onConnected(Bundle bundle) {
-     //   Toast.makeText(MapActivity_Pedido.this,"Conexion con api places EXITOSA",Toast.LENGTH_SHORT).show();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         posicionActual = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (posicionActual != null) {
-            CrearMarcador(posicionActual,"milocation");
+            CrearMarcador(posicionActual, "milocation");
         }
 
     }
@@ -259,12 +264,11 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-    Toast.makeText(MapActivity_Pedido.this,"Conexion con api places FAILED",Toast.LENGTH_SHORT).show();
+        Toast.makeText(MapActivity_Pedido.this, "Conexion con api places FAILED", Toast.LENGTH_SHORT).show();
     }
 
-
     ///Dialogo para validar envio de emergencia
-    public class CustomDialog extends Dialog implements View.OnClickListener  {
+    public class CustomDialog extends Dialog implements View.OnClickListener {
         Button SiEnviar, btnsalir;
         Activity mActivity;
 
@@ -272,7 +276,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             super(activity);
             mActivity = activity;
             setContentView(R.layout.activity_dialogo_enviar_emergencia);
-            final TextView txt_info_pedido = (TextView)findViewById(R.id.txt_info_pedido);
+            final TextView txt_info_pedido = (TextView) findViewById(R.id.txt_info_pedido);
             txt_info_pedido.setText(ubicacionPaciente.getTipoEmergencia() + " con " +
                     ubicacionPaciente.getNumeroPacientes() + " pacientes involucrados " + " en " + edtDireccion.getText().toString());
             SiEnviar = (Button) findViewById(R.id.btnSi_Enviar);
@@ -284,21 +288,24 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         @Override
         public void onClick(View v) {
-        if (v==btnsalir){
-        cancel();
+            if (v == btnsalir) {
+                cancel();
 
-        }else {
+            } else {
                 // Pulso boton Enviar
                 dismiss();
 
-         }
-         }
+            }
         }
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         mMap.setMyLocationEnabled(true);
 /*
         boolean network_enabled = locationMangaer.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -320,10 +327,14 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     //metodo para crear marcadores
     public void CrearMarcador(Location location, String Titulo)
     {
+
         mMap.clear();
-        mMap.addMarker(new MarkerOptions()
+        Marker marcador = mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
                 .title(Titulo));
+
+
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15.0f));
 

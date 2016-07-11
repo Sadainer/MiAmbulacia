@@ -77,6 +77,7 @@
             android:id="@+id/but_no_gracias"
             android:padding="@dimen/activity_horizontal_margin"
             android:layout_margin="@dimen/activity_horizontal_margin"
+            android:onClick="salir"
             />
 
         <Button
@@ -88,6 +89,7 @@
             android:id="@+id/btnEnviarCalificacion"
             android:padding="@dimen/activity_horizontal_margin"
             android:layout_margin="@dimen/activity_horizontal_margin"
+            android:onClick="enviarCalificacion"
              />
     </LinearLayout>
 

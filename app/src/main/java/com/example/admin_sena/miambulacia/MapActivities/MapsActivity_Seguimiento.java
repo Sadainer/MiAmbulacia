@@ -1,22 +1,26 @@
-package com.example.admin_sena.miambulacia;
+package com.example.admin_sena.miambulacia.MapActivities;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Handler;
-import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
+import com.example.admin_sena.miambulacia.CalificacionServicioActivity;
 import com.example.admin_sena.miambulacia.ClasesAsincronas.GetAsyncrona;
+import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
+import com.example.admin_sena.miambulacia.Dto.CancelPedidoDto;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
 import com.example.admin_sena.miambulacia.Dto.UbicacionParamedicoDto;
+import com.example.admin_sena.miambulacia.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,8 +28,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 
 
@@ -37,65 +39,38 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 
     private GoogleMap mMap2;
     private static String DIR_URL = "http://190.109.185.138:8013/api/UbicacionAmbulancias/";
+    private static String DIR_URL_CANCELAR = "http://190.109.185.138:8013/api/PedidoAmbulancia/Cancelar";
+
     Context cnt;
     Timer timer;
     TimerTask timerTask;
     Gson jsson = new Gson();
     final Handler handler = new Handler();
     UbicacionPacienteDto miUbicacion = new UbicacionPacienteDto();
-    LatLng MiPosicion = new LatLng(0,0);
+    LatLng MiPosicion = new LatLng(0, 0);
     Marker marcadorAmbulancia;
     Location mylocation = new Location("point b"), ambuLocation = new Location("point a");
     AlertDialog alert;
     AlertDialog irCalificar;
+    UbicacionParamedicoDto ubicacionParamedicoDto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_activity__seguimiento);
-        //Bundle bundle = this.getIntent().getExtras();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-        .findFragmentById(R.id.fragment2);
+                .findFragmentById(R.id.fragment2);
         mapFragment.getMapAsync(this);
-        cnt=this;
-        Button btnCancelarPedido = (Button)findViewById(R.id.btnCancelarPedido);
-
-        final String[] items = {"Me equivoque", "Llegó otra ambulancia","Ya no es necesario el servicio"};
-        btnCancelarPedido.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity_Seguimiento.this);
-                alert = builder.create();
-                builder.setTitle("Deseo cancelar la emergencia porque...") //
-                        .setCancelable(false)
-                        .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                alert.dismiss();
-                            }
-                        })
-                        .setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                alert.dismiss();
-                            }
-                        })
-                        .setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                builder.show();
-
-            }
-        });
+        cnt = this;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         mMap2 = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         mMap2.setMyLocationEnabled(true);
         Intent a = getIntent();
          miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
@@ -146,6 +121,63 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         };
     }
 
+    public void cancelarPedido(View view){
+        final CancelPedidoDto cancelPedidoDto = new CancelPedidoDto(ubicacionParamedicoDto.getCedula());
+
+
+        final String[] items = {"Me equivoque", "Llegó otra ambulancia","Ya no es necesario el servicio"};
+        cancelPedidoDto.setRazonCancela(items[1]);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity_Seguimiento.this);
+        alert = builder.create();
+        builder.setCancelable(false);
+        builder.setTitle("Deseo cancelar la emergencia porque...") //
+                .setCancelable(false)
+                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        enviarCancelarEmergencia(cancelPedidoDto);
+                        alert.dismiss();
+                    }
+                })
+                .setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent irAcalificar= new Intent(MapsActivity_Seguimiento.this,CalificacionServicioActivity.class);
+                        irAcalificar.putExtra("IdAmbulancia",ubicacionParamedicoDto.getCedula());
+                        startActivity(irAcalificar);
+                        finish();
+                    }
+                })
+                .setSingleChoiceItems(items,1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case 1:
+                                cancelPedidoDto.setRazonCancela(items[0]);
+                                break;
+                            case 2:
+                                cancelPedidoDto.setRazonCancela(items[1]);
+                                break;
+                            case 3:
+                                cancelPedidoDto.setRazonCancela(items[2]);
+                                break;
+                        }
+                    }
+                });
+
+        builder.show();
+    }
+
+    private void enviarCancelarEmergencia(CancelPedidoDto cancelPedidoDto) {
+        Log.e("antes de execute:",":)");
+        PostAsyncrona cancelar = new PostAsyncrona(jsson.toJson(cancelPedidoDto), MapsActivity_Seguimiento.this, new PostAsyncrona.AsyncResponse() {
+            @Override
+            public void processFinish(String output) {
+                Log.e("resultadoCancelar:",output);
+            }
+        });
+        cancelar.execute(DIR_URL_CANCELAR);
+        Log.e("despues de ","execute");
+    }
 ///////////////////Actualizar posicion ambulancia//////////////////////////////////////////////////
 
     private void ActualizarUbicacionAmbulancias(){
@@ -156,11 +188,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         try {
             String resultado =  Actualizar.execute(DIR_URL + a.getStringExtra("IdAmbulancia")).get();
 
-            Log.e("URL +ID: ", DIR_URL + a.getStringExtra("IdAmbulancia"));
-            Log.e("Resultado", resultado);
-            Toast.makeText(MapsActivity_Seguimiento.this,resultado,Toast.LENGTH_SHORT).show();
-             //jsson =  jsson.toJson(resultado);
-            UbicacionParamedicoDto ubicacionParamedicoDto = jsson.fromJson(resultado, UbicacionParamedicoDto.class);
+//            Log.e("Resultado", resultado);
+            ubicacionParamedicoDto = jsson.fromJson(resultado, UbicacionParamedicoDto.class);
             LatLng posicionAmbu = new LatLng(ubicacionParamedicoDto.getLatitud(),ubicacionParamedicoDto.getLongitud());
             ambuLocation.setLongitude(ubicacionParamedicoDto.getLongitud());
             ambuLocation.setLatitude(ubicacionParamedicoDto.getLatitud());
@@ -171,9 +200,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 
             }else {
                 marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu));
-                // agregar polilinea
-                PolylineOptions Polilinea =new PolylineOptions().add(posicionAmbu).add(MiPosicion);
-                mMap2.addPolyline(Polilinea);///////////
+
                 float distancia = mylocation.distanceTo(ambuLocation);
                 if (distancia<20){
                     timer.cancel();
@@ -186,17 +213,19 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent irAcalificar= new Intent(MapsActivity_Seguimiento.this,CalificacionServicioActivity.class);
+                            irAcalificar.putExtra("IdAmbulancia",ubicacionParamedicoDto.getCedula());
                             startActivity(irAcalificar);
                             finish();
                         }
                     }).setNegativeButton("No, Gracias", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent salir = new Intent(MapsActivity_Seguimiento.this,MapActivity_Pedido.class);
+                            Intent salir = new Intent(MapsActivity_Seguimiento.this, MapActivity_Pedido.class);
                             startActivity(salir);
                             finish();
                         }
                     });
+                builder2.show();
                 }
             }
 
@@ -209,5 +238,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         }
     }
 
-
+    @Override
+    protected void onStop() {
+        finish();
+        super.onStop();
+    }
 }
