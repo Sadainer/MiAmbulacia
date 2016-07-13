@@ -28,6 +28,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 
@@ -40,6 +42,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     private GoogleMap mMap2;
     private static String DIR_URL = "http://190.109.185.138:8013/api/UbicacionAmbulancias/";
     private static String DIR_URL_CANCELAR = "http://190.109.185.138:8013/api/PedidoAmbulancia/Cancelar";
+//    private boolean flag = false;
 
     Context cnt;
     Timer timer;
@@ -53,6 +56,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     AlertDialog alert;
     AlertDialog irCalificar;
     UbicacionParamedicoDto ubicacionParamedicoDto;
+    FirebaseDatabase database;
+    DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +68,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                 .findFragmentById(R.id.fragment2);
         mapFragment.getMapAsync(this);
         cnt = this;
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference("");
     }
 
     @Override
@@ -86,8 +93,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             mMap2.animateCamera(CameraUpdateFactory.newLatLngZoom(MiPosicion, 14.0f));
 
         }
-        LatLng PosicionAmbulancia= new LatLng(a.getDoubleExtra("LatAmbulancia",0),a.getDoubleExtra("LongAmbulancia",0));
-
+       // LatLng PosicionAmbulancia= new LatLng(a.getDoubleExtra("LatAmbulancia",0),a.getDoubleExtra("LongAmbulancia",0));
 
 
     }
@@ -100,10 +106,10 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     public void startTimer() {
         //set a new Timer
         timer = new Timer();
-        //initialize the TimerTask's job
+        //inicializa la tarea de TimerTask
         initializeTimerTask();
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
-        timer.schedule(timerTask, 5000, 15000); //
+        timer.schedule(timerTask, 4000, 15000); //
     }
 
     public void initializeTimerTask() {
@@ -143,6 +149,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                     public void onClick(DialogInterface dialog, int which) {
                         Intent irAcalificar= new Intent(MapsActivity_Seguimiento.this,CalificacionServicioActivity.class);
                         irAcalificar.putExtra("IdAmbulancia",ubicacionParamedicoDto.getCedula());
+                        reference.child("Pedido2").child("Cancelado").setValue(true);
                         startActivity(irAcalificar);
                         finish();
                     }
@@ -236,6 +243,11 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             System.out.println("Error e");
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
     }
 
     @Override
