@@ -44,6 +44,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -79,6 +81,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
     ProgressDialog progress;
+    FirebaseDatabase database;
+    DatabaseReference reference;
     URL url;
     HttpURLConnection urlConnection;
     StringBuilder total;
@@ -104,6 +108,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     .build();
         }
 
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference("");
         cnt = this;
         //   Bundle extras = getIntent().getExtras();
         //   Address[] direcciones = (Address[]) extras.get("Direcciones");
@@ -370,6 +376,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 if (!(output.equals(""))){
                  ParamedicoDto outputtojson = gsson.fromJson(output, ParamedicoDto.class);
                     finish();
+                    reference.child("Pedido2").child("Cancelado").setValue(false);
+
                     Intent i = new Intent(context,MapsActivity_Seguimiento.class);
                     //guardar variables en intent
                     i.putExtra("LatAmbulancia",outputtojson.getLatitud()).putExtra("LongAmbulancia",outputtojson.getLongitud());
