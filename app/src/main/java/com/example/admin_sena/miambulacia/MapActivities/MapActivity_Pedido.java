@@ -81,8 +81,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
     ProgressDialog progress;
-    FirebaseDatabase database;
-    DatabaseReference reference;
     URL url;
     HttpURLConnection urlConnection;
     StringBuilder total;
@@ -108,8 +106,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     .build();
         }
 
-        database = FirebaseDatabase.getInstance();
-        reference = database.getReference("");
         cnt = this;
         //   Bundle extras = getIntent().getExtras();
         //   Address[] direcciones = (Address[]) extras.get("Direcciones");
@@ -376,7 +372,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 if (!(output.equals(""))){
                  ParamedicoDto outputtojson = gsson.fromJson(output, ParamedicoDto.class);
                     finish();
-                    reference.child("Pedido2").child("Cancelado").setValue(false);
+                 //   reference.child("Pedido2").child("Cancelado").setValue(false);
 
                     Intent i = new Intent(context,MapsActivity_Seguimiento.class);
                     //guardar variables en intent
