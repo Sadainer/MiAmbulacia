@@ -25,6 +25,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -88,7 +89,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             mylocation.setLongitude(miUbicacion.getLongitud());
             mMap2.addMarker(new MarkerOptions()
                     .position(MiPosicion)
-                    .title("Mi ubicacion"));
+                    .title("Mi ubicacion")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.user)));
             mMap2.moveCamera(CameraUpdateFactory.newLatLng(MiPosicion));
             mMap2.animateCamera(CameraUpdateFactory.newLatLngZoom(MiPosicion, 14.0f));
 
@@ -203,10 +205,12 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 
             if (marcadorAmbulancia!=null){          /////El marcador ya se dibujo por primera vez y debe borrarse para dibujar otro.
                 marcadorAmbulancia.remove();
-                marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu));
+                marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu)
+                                          .icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
 
             }else {
-                marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu));
+                marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu)
+                                          .icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
 
                 float distancia = mylocation.distanceTo(ambuLocation);
                 if (distancia<20){
