@@ -369,7 +369,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             @Override
             public void processFinish(String output) {
                 progress.dismiss();
-                Toast.makeText(cnt,"output:"+ output, Toast.LENGTH_LONG).show();
+
                 Log.e("output",output);
                 if (!(output.equals(""))){
                  ParamedicoDto outputtojson = gsson.fromJson(output, ParamedicoDto.class);
