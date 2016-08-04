@@ -40,7 +40,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -116,6 +115,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         progress = new ProgressDialog(this);
         progress.setTitle("Enviando emergencia");
         progress.setMessage("Por favor espere");
+
         locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
         //this to set delegate/listener back to this class
 
@@ -206,6 +206,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
                     dialog.show();
                     dialog.setTitle("Enviar Emergencia?");
+
 
                     dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override

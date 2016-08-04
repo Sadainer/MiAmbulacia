@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.admin_sena.miambulacia.CalificacionServicioActivity;
 import com.example.admin_sena.miambulacia.ClasesAsincronas.GetAsyncrona;
@@ -198,6 +199,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             String resultado =  Actualizar.execute(DIR_URL + a.getStringExtra("IdAmbulancia")).get();
 
 //            Log.e("Resultado", resultado);
+          //  Toast.makeText(MapsActivity_Seguimiento.this,resultado,Toast.LENGTH_SHORT).show();
             ubicacionParamedicoDto = jsson.fromJson(resultado, UbicacionParamedicoDto.class);
             LatLng posicionAmbu = new LatLng(ubicacionParamedicoDto.getLatitud(),ubicacionParamedicoDto.getLongitud());
             ambuLocation.setLongitude(ubicacionParamedicoDto.getLongitud());
