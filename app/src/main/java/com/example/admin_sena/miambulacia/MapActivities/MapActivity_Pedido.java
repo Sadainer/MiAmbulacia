@@ -206,7 +206,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
                     dialog.show();
                     dialog.setTitle("Enviar Emergencia?");
-
+                    dialog.setCancelable(false);
 
                     dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
@@ -273,7 +273,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     }
 
     ///Dialogo para validar envio de emergencia
-    public class CustomDialog extends Dialog implements View.OnClickListener {
+    public class CustomDialog extends Dialog {
         Button SiEnviar, btnsalir;
         Activity mActivity;
 
@@ -285,23 +285,33 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             txt_info_pedido.setText(ubicacionPaciente.getTipoEmergencia() + " con " +
                     ubicacionPaciente.getNumeroPacientes() + " pacientes involucrados " + " en " + edtDireccion.getText().toString());
             SiEnviar = (Button) findViewById(R.id.btnSi_Enviar);
-            SiEnviar.setOnClickListener(this);
+            SiEnviar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
             btnsalir = (Button) findViewById(R.id.btn_no_salir);
-            btnsalir.setOnClickListener(this);
+            btnsalir.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cancel();
+                }
+            });
 
         }
 
-        @Override
+        /*@Override
         public void onClick(View v) {
             if (v == btnsalir) {
-                cancel();
+
 
             } else {
                 // Pulso boton Enviar
-                dismiss();
+                //dismiss();
 
             }
-        }
+        }*/
     }
 
     @Override
