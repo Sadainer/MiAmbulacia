@@ -207,10 +207,9 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     dialog.show();
                     dialog.setTitle("Enviar Emergencia?");
                     dialog.setCancelable(false);
-
-                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
-                        public void onDismiss(DialogInterface dialog) {
+                        public void onCancel(DialogInterface dialog) {
                             Runnable progressRunnable = new Runnable() {
 
                                 @Override
@@ -223,9 +222,17 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                                 }
                             };
                             Handler pdCanceller = new Handler();
-                            pdCanceller.postDelayed(progressRunnable, 2000);
+                            pdCanceller.postDelayed(progressRunnable, 1000);
                             ///////////////Mostrar Progress Dialog
                             progress.show();
+
+                        }
+                    });
+
+                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+
 
 
                         }
@@ -288,30 +295,18 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             SiEnviar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dismiss();
+                    cancel();
                 }
             });
             btnsalir = (Button) findViewById(R.id.btn_no_salir);
             btnsalir.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    cancel();
+                    dismiss();
                 }
             });
 
         }
-
-        /*@Override
-        public void onClick(View v) {
-            if (v == btnsalir) {
-
-
-            } else {
-                // Pulso boton Enviar
-                //dismiss();
-
-            }
-        }*/
     }
 
     @Override
