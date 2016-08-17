@@ -72,6 +72,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         cnt = this;
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("");
+        Intent a = getIntent();
+        miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
+        reference.child("Pedidos").child("Pedido" + miUbicacion.getIdPaciente()).setValue(miUbicacion);
     }
 
     @Override
@@ -81,8 +84,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             return;
         }
         mMap2.setMyLocationEnabled(true);
-        Intent a = getIntent();
-         miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
+       // Intent a = getIntent();
+       //  miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
         if (miUbicacion != null) {
             MiPosicion = new LatLng(miUbicacion.getLatitud(),miUbicacion.getLongitud());
 
@@ -144,17 +147,20 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                 .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         enviarCancelarEmergencia(cancelPedidoDto);
-                        alert.dismiss();
+                        Intent irAcalificar= new Intent(MapsActivity_Seguimiento.this,CalificacionServicioActivity.class);
+                        irAcalificar.putExtra("IdAmbulancia",ubicacionParamedicoDto.getCedula());
+                        reference.child("Pedidos").child("Pedido" + miUbicacion.getIdPaciente()).child("Cancelado").setValue(true);
+                        Log.e("Pedido cancelado","Pedido");
+                        startActivity(irAcalificar);
+                        finish();
+
                     }
                 })
                 .setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent irAcalificar= new Intent(MapsActivity_Seguimiento.this,CalificacionServicioActivity.class);
-                        irAcalificar.putExtra("IdAmbulancia",ubicacionParamedicoDto.getCedula());
-                        reference.child("Pedido2").child("Cancelado").setValue(true);
-                        startActivity(irAcalificar);
-                        finish();
+                        alert.dismiss();
+
                     }
                 })
                 .setSingleChoiceItems(items,1, new DialogInterface.OnClickListener() {
@@ -261,4 +267,5 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         finish();
         super.onStop();
     }
+
 }

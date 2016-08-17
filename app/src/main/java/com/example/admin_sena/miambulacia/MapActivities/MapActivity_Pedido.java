@@ -52,6 +52,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -67,6 +68,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     RadioGroup rGrpNumPacientes;
     Context cnt;
     UbicacionPacienteDto ubicacionPaciente;
+    FirebaseDatabase database;
+    DatabaseReference reference;
 
     //Variable para guardar la posicion inicial del equipo
     private Location posicionActual = null;
@@ -82,11 +85,11 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
     ProgressDialog progress;
-    URL url;
-    HttpURLConnection urlConnection;
-    StringBuilder total;
+//    URL url;
+  //  HttpURLConnection urlConnection;
+   // StringBuilder total;
 
-    // ProgressDialog progress ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -214,7 +217,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
                                 @Override
                                 public void run() {
-                                    ubicacionPaciente.setIdPaciente("Sadainer");
+                                    SecureRandom secureRandom = new SecureRandom();
+                                    ubicacionPaciente.setIdPaciente(String.valueOf(secureRandom.nextInt()));
                                     ubicacionPaciente.setLatitud(posicionActual.getLatitude());
                                     ubicacionPaciente.setLongitud(posicionActual.getLongitude());
                                     ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
@@ -312,6 +316,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+
         mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -337,7 +342,11 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     //metodo para crear marcadores
     public void CrearMarcador(Location location, String Titulo)
     {
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference("");
 
+
+        reference.child("Pedidos").child("Pedido" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente.getIdPaciente());
         mMap.clear();
         Marker marcador = mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
