@@ -1,19 +1,15 @@
 package com.example.admin_sena.miambulacia.Dto;
 
-
-
 import java.io.Serializable;
 
-
-
 public class UbicacionPacienteDto implements Serializable {
+
     private String IdPaciente;
     private Double Latitud;
     private Double Longitud;
     private String TipoEmergencia;
     private int NumeroPacientes;
     private String Direccion;
-
 
     public String getDireccion() {
         return Direccion;

@@ -85,8 +85,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
     ProgressDialog progress;
-//    URL url;
-  //  HttpURLConnection urlConnection;
    // StringBuilder total;
 
 
@@ -130,13 +128,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         MejorProveedor = locationMangaer.getBestProvider(req, false);
 
         ubicacionPaciente = new UbicacionPacienteDto();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-        }
-        //Configuramos el listener para que verifique la ubicaciones cada 10000 milisegundos y 20 metros, si cumple las dos condiciones
+    //Configuramos el listener para que verifique la ubicaciones cada 10000 milisegundos y 20 metros, si cumple las dos condiciones
         //se dispara el metodo
         locationListener = new MiUbicacion();
         locationMangaer.requestLocationUpdates(MejorProveedor, TIEMPO_ACTUALIZACION, RADIO_ACTUALIZACION, locationListener);
@@ -147,12 +139,9 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     return;
                 }
             }
-            //Location location = locationMangaer.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         }
         mapFragment.getMapAsync(this);
-
-
         btnEnviarAlerta = (Button) findViewById(R.id.btnCancelarPedido);
         edtDireccion = (EditText) findViewById(R.id.edtDireccion);
         rGrpNumPacientes = (RadioGroup) findViewById(R.id.grpNumPaciente);
@@ -193,7 +182,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         btnEnviarAlerta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //   final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
                 Toast escoja_num_pacientes = Toast.makeText(getApplication(), "Por favor elija un numero de pacientes", Toast.LENGTH_SHORT);
                 Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(), "Por favor elija un tipo de Emergencia", Toast.LENGTH_SHORT);
@@ -229,19 +217,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                             pdCanceller.postDelayed(progressRunnable, 1000);
                             ///////////////Mostrar Progress Dialog
                             progress.show();
-
                         }
                     });
-
-                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-
-
-
-                        }
-                    });
-
                 }
 
             }
@@ -377,20 +354,15 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(final UbicacionPacienteDto ubicacion, final Context context)  {
-
         PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), context,
-
                 new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
                 progress.dismiss();
-
                 Log.e("output",output);
                 if (!(output.equals(""))){
                  ParamedicoDto outputtojson = gsson.fromJson(output, ParamedicoDto.class);
                     finish();
-                 //   reference.child("Pedido2").child("Cancelado").setValue(false);
-
                     Intent i = new Intent(context,MapsActivity_Seguimiento.class);
                     //guardar variables en intent
                     i.putExtra("LatAmbulancia",outputtojson.getLatitud()).putExtra("LongAmbulancia",outputtojson.getLongitud());
@@ -400,15 +372,10 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     i.putExtra("ab",ubicacion);
                     startActivity(i);
                 }
-
             }
 
         });
-
-        System.out.println(gsson.toJson(ubicacion));
-        Log.e("Envia",gsson.toJson(ubicacion));
         try {
-
             EnviarUbicacionAsyn.execute(DIR_URL + "PedidoAmbulancia").get();
 
         } catch (InterruptedException e) {

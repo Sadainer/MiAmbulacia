@@ -198,28 +198,20 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 
     private void ActualizarUbicacionAmbulancias(){
         final   Intent a = getIntent();
-
         GetAsyncrona Actualizar = new GetAsyncrona();
-
         try {
             String resultado =  Actualizar.execute(DIR_URL + a.getStringExtra("IdAmbulancia")).get();
-
-//            Log.e("Resultado", resultado);
-          //  Toast.makeText(MapsActivity_Seguimiento.this,resultado,Toast.LENGTH_SHORT).show();
             ubicacionParamedicoDto = jsson.fromJson(resultado, UbicacionParamedicoDto.class);
             LatLng posicionAmbu = new LatLng(ubicacionParamedicoDto.getLatitud(),ubicacionParamedicoDto.getLongitud());
             ambuLocation.setLongitude(ubicacionParamedicoDto.getLongitud());
             ambuLocation.setLatitude(ubicacionParamedicoDto.getLatitud());
-
             if (marcadorAmbulancia!=null){          /////El marcador ya se dibujo por primera vez y debe borrarse para dibujar otro.
                 marcadorAmbulancia.remove();
                 marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu)
                                           .icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
-
             }else {
                 marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu)
                                           .icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
-
                 float distancia = mylocation.distanceTo(ambuLocation);
                 if (distancia<20){
                     timer.cancel();
