@@ -12,7 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.example.admin_sena.miambulacia.MapActivities.MapActivity_Pedido;
+import com.example.admin_sena.miambulacia.mapActivities.MapActivity_Pedido;
 
 
 public class MainActivity extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package com.example.admin_sena.miambulacia.MapActivities;
+package com.example.admin_sena.miambulacia.mapActivities;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.admin_sena.miambulacia.CalificacionServicioActivity;
 import com.example.admin_sena.miambulacia.ClasesAsincronas.GetAsyncrona;

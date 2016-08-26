@@ -9,7 +9,7 @@ import android.widget.RadioGroup;
 
 import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.miambulacia.Dto.CalificacionDto;
-import com.example.admin_sena.miambulacia.MapActivities.MapActivity_Pedido;
+import com.example.admin_sena.miambulacia.mapActivities.MapActivity_Pedido;
 import com.google.gson.Gson;
 
 public class CalificacionServicioActivity extends AppCompatActivity {

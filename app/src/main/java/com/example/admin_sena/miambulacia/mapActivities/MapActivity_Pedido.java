@@ -1,4 +1,4 @@
-package com.example.admin_sena.miambulacia.MapActivities;
+package com.example.admin_sena.miambulacia.mapActivities;
 
 import android.Manifest;
 import android.app.Activity;
@@ -50,8 +50,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Locale;
