@@ -2,7 +2,7 @@
     <string name="app_name">Mi Ambulacia</string>
 
     <string name="title_activity_maps_activity__seguimiento">Map</string>
-                <!--  strings Pedido  -->
+    <!--  strings Pedido  -->
     <string name="title_activity_map_activity__pedido">Solicitud de ambulancia</string>
     <string name="text_Miubicacion">Mi Ubicacion</string>
     <string name="st_Accidente_transito">Accidente de transito</string>
@@ -38,4 +38,7 @@
     <string name="st_Comentarios">Comentarios</string>
 
     <string name="title_activity_main2">Main2Activity</string>
+
+    <!--  strings HISTORIAL  -->
+    <string name="st_TituloHistorialActivity">Historial</string>
 </resources>

@@ -259,4 +259,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         super.onStop();
     }
 
+    @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
+    }
 }
