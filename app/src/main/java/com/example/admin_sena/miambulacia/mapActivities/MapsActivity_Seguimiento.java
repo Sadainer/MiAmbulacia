@@ -29,6 +29,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
@@ -205,9 +207,16 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             ambuLocation.setLongitude(ubicacionParamedicoDto.getLongitud());
             ambuLocation.setLatitude(ubicacionParamedicoDto.getLatitud());
             if (marcadorAmbulancia!=null){          /////El marcador ya se dibujo por primera vez y debe borrarse para dibujar otro.
-                marcadorAmbulancia.remove();
+
+                //Dibujar polilinea entre posicion ultimo marcador y nuevo marcador
+                Polyline linea = mMap2.addPolyline(new PolylineOptions()
+                .add(marcadorAmbulancia.getPosition(), posicionAmbu).width(8).color(R.color.colorFondo)
+                );
+
+                marcadorAmbulancia.setPosition(posicionAmbu);
+               /* marcadorAmbulancia.remove();
                 marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu)
-                                          .icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
+                                          .icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));*/
             }else {
                 marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu)
                                           .icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));

@@ -10,6 +10,16 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.admin_sena.miambulacia.HistorialActivity">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="apareceMenu"
+        android:theme="@style/ButtonNormal"
+        android:background="@drawable/selector_boton_normal"
+        android:id="@+id/btnApareceMenu"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="aparecermenu"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvHistorial"
