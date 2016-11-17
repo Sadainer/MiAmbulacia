@@ -15,9 +15,9 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
 
  //   ArrayList<UbicacionPacienteDto> milista;
 
-    ArrayList<ObjetoPruebaRecycler> milista;
+    ArrayList<UbicacionPacienteDto> milista;
 
-    public HistorialAdapter(ArrayList<ObjetoPruebaRecycler> milista) {
+    public HistorialAdapter(ArrayList<UbicacionPacienteDto> milista) {
         this.milista = milista;
     }
 
@@ -29,15 +29,11 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
 
     @Override
     public void onBindViewHolder(HistorialViewHolder holder, int position) {
-       /* UbicacionPacienteDto item = milista.get(position);
+
+        UbicacionPacienteDto item = milista.get(position);
         holder.tvTipo.setText("Tipo: "+item.getTipoEmergencia());
-        holder.tvNumero.setText("Pacientes: "+ String.valueOf(item.getNumeroPacientes()));
+        holder.tvNumero.setText("Pacientes: "+ item.getNumeroPacientes());
         holder.tvDieccion.setText("Direccion: "+item.getDireccion());
-*/
-        ObjetoPruebaRecycler item = milista.get(position);
-        holder.tvTipo.setText("Tipo: "+item.nombre);
-        holder.tvNumero.setText("Pacientes: "+ item.apellidos);
-        holder.tvDieccion.setText("Direccion: "+item.cedula);
 
 
     }

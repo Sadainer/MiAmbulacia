@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.example.admin_sena.miambulacia.BDPedidos;
 import com.example.admin_sena.miambulacia.CalificacionServicioActivity;
 import com.example.admin_sena.miambulacia.ClasesAsincronas.GetAsyncrona;
 import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
@@ -45,7 +47,6 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     private GoogleMap mMap2;
     private static String DIR_URL = "http://190.109.185.138:8013/api/UbicacionAmbulancias/";
     private static String DIR_URL_CANCELAR = "http://190.109.185.138:8013/api/PedidoAmbulancia/Cancelar";
-//    private boolean flag = false;
 
     Context cnt;
     Timer timer;
@@ -62,6 +63,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     FirebaseDatabase database;
     DatabaseReference reference;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +78,13 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         Intent a = getIntent();
         miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
         reference.child("Pedidos").child("Pedido" + miUbicacion.getIdPaciente()).setValue(miUbicacion);
+        String saveInDB = jsson.toJson(miUbicacion);
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(getApplicationContext().getDatabasePath("My BaseDatos").getPath(),null,SQLiteDatabase.OPEN_READWRITE);
+
+
+
+        db.execSQL("INSERT INTO TablaPedidos (Pedidos) VALUES('"+saveInDB+"')");
+        db.close();
     }
 
     @Override

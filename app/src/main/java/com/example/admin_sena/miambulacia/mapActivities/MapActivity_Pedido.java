@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -29,6 +30,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.admin_sena.miambulacia.BDPedidos;
 import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.miambulacia.Dto.ParamedicoDto;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
@@ -87,7 +89,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     ProgressDialog progress;
    // StringBuilder total;
 
-
+    BDPedidos baseDatosPedidos;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -108,6 +110,18 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     .build();
         }
 
+        baseDatosPedidos = new BDPedidos(MapActivity_Pedido.this,"My BaseDatos",null, 1);
+        Log.e("nombre DB: ",baseDatosPedidos.getDatabaseName());
+        Log.e("PATH DB: ", getApplicationContext().getDatabasePath(baseDatosPedidos.getDatabaseName()).getPath());
+
+        SQLiteDatabase db1 = baseDatosPedidos.getWritableDatabase();
+
+
+
+        db1.close();
+       // SQLiteDatabase db = baseDatosPedidos.getReadableDatabase();
+       // db.execSQL("INSERT INTO TablaPedidos (Pedidos) VALUES('"+"Hola"+"')");
+       // db.close();
         cnt = this;
         //   Bundle extras = getIntent().getExtras();
         //   Address[] direcciones = (Address[]) extras.get("Direcciones");
@@ -238,6 +252,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             case R.id.menu_historial:
                 Intent pasarAhistorial = new Intent(MapActivity_Pedido.this, HistorialActivity.class);
                 startActivity(pasarAhistorial);
+                finish();
 
         }
         return super.onOptionsItemSelected(item);
