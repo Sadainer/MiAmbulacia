@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
@@ -16,14 +17,17 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
  //   ArrayList<UbicacionPacienteDto> milista;
 
     ArrayList<UbicacionPacienteDto> milista;
+    HistorialViewHolder v;
 
-    public HistorialAdapter(ArrayList<UbicacionPacienteDto> milista) {
+    public HistorialAdapter(ArrayList<UbicacionPacienteDto> milista, HistorialActivity h) {
         this.milista = milista;
+
     }
 
     @Override
     public HistorialViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_recyclerview,parent,false);
+        v = new HistorialViewHolder(view);
         return new HistorialViewHolder(view);
     }
 
@@ -44,14 +48,18 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
     }
 
     public static class HistorialViewHolder extends RecyclerView.ViewHolder{
+
+        ImageView imagen;
         TextView tvDieccion;
         TextView tvTipo;
         TextView tvNumero;
+
         public HistorialViewHolder(View itemView) {
             super(itemView);
             tvDieccion = (TextView)itemView.findViewById(R.id.tv1);
             tvTipo = (TextView)itemView.findViewById(R.id.tv2);
             tvNumero = (TextView)itemView.findViewById(R.id.tv3);
+            imagen = (ImageView)itemView.findViewById(R.id.imageView);
         }
     }
 }

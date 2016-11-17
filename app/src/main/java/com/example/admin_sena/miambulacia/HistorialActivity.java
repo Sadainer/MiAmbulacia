@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,8 +83,7 @@ public class HistorialActivity extends AppCompatActivity {
                UbicacionPacienteDto dto = json.fromJson(mcursor.getString(0), UbicacionPacienteDto.class);
                 Log.e("Funcionando","DTO");
                 miLista.add(dto);
-                // json = ;
-               // miLista.add()
+
             } while(mcursor.moveToNext());
 
 
@@ -94,7 +94,7 @@ public class HistorialActivity extends AppCompatActivity {
             historialRecycler = (RecyclerView)findViewById(R.id.rvHistorial);
             historialRecycler.setHasFixedSize(true);
 
-            HistorialAdapter historialAdapter =new HistorialAdapter(miLista);
+            HistorialAdapter historialAdapter =new HistorialAdapter(miLista, this);
             historialRecycler.setAdapter(historialAdapter);
 
             historialRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -121,6 +121,7 @@ public class HistorialActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu m) {
         getMenuInflater().inflate(R.menu.menu_historial_activity,m);
         menu = m.findItem(R.id.cubo_basura);
+//        menu.setVisible(true);
         return super.onCreateOptionsMenu(m);
     }
 
