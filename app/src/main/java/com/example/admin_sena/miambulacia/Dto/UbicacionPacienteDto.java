@@ -5,11 +5,19 @@ import java.io.Serializable;
 public class UbicacionPacienteDto implements Serializable {
 
     private String IdPaciente;
-    private Double Latitud;
-    private Double Longitud;
+    private Double Latitud, Longitud;
     private String TipoEmergencia;
     private int NumeroPacientes;
     private String Direccion;
+    private boolean Aceptado;
+
+    public boolean isAceptado() {
+        return Aceptado;
+    }
+
+    public void setAceptado(boolean aceptado) {
+        Aceptado = aceptado;
+    }
 
     public String getDireccion() {
         return Direccion;

@@ -119,6 +119,6 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
         delegate.processFinish(result);
      //   prgEnviando.dismiss();
-        Log.e("OnpostExecute","onpost");
+       // Log.e("OnpostExecute","onpost");
     }
 }

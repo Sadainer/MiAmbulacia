@@ -33,8 +33,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 
@@ -45,8 +48,8 @@ import java.util.concurrent.ExecutionException;
 public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap2;
-    private static String DIR_URL = "http://190.109.185.138:8013/api/UbicacionAmbulancias/";
-    private static String DIR_URL_CANCELAR = "http://190.109.185.138:8013/api/PedidoAmbulancia/Cancelar";
+    private static String DIR_URL = "http://myambulancia.azurewebsites.net/api/UbicacionAmbulancias/";
+    private static String DIR_URL_CANCELAR = "http://myambulancia.azurewebsites.net/api/PedidoAmbulancia/Cancelar";
 
     Context cnt;
     Timer timer;
@@ -57,12 +60,11 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     LatLng MiPosicion = new LatLng(0, 0);
     Marker marcadorAmbulancia;
     Location mylocation = new Location("point b"), ambuLocation = new Location("point a");
-    AlertDialog alert;
-    AlertDialog irCalificar;
+    AlertDialog alert, irCalificar;
     UbicacionParamedicoDto ubicacionParamedicoDto;
     FirebaseDatabase database;
     DatabaseReference reference;
-
+    String idAmbulancia;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,15 +78,70 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("");
         Intent a = getIntent();
+        idAmbulancia = a.getStringExtra("IdAmbulancia");
+        Log.e("IdAmbulancia ",idAmbulancia);
         miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
         reference.child("Pedidos").child("Pedido" + miUbicacion.getIdPaciente()).setValue(miUbicacion);
         String saveInDB = jsson.toJson(miUbicacion);
         SQLiteDatabase db = SQLiteDatabase.openDatabase(getApplicationContext().getDatabasePath("My BaseDatos").getPath(),null,SQLiteDatabase.OPEN_READWRITE);
 
-
-
         db.execSQL("INSERT INTO TablaPedidos (Pedidos) VALUES('"+saveInDB+"')");
         db.close();
+
+        reference.child("Ambulancias").child(idAmbulancia).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("ambuPositionChanged"," "+dataSnapshot.getKey());
+                actualizarPosicionAmbulancia(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void actualizarPosicionAmbulancia(DataSnapshot dataSnapshot) {
+        double latAmbu = (double)dataSnapshot.child("latitud").getValue();
+        double lngAmbu = (double)dataSnapshot.child("longitud").getValue();
+
+        LatLng posicionAmbu = new LatLng(latAmbu, lngAmbu);
+        if (marcadorAmbulancia!=null){          /////El marcador ya se dibujo por primera vez y debe borrarse para dibujar otro.
+                                                //Dibujar polilinea entre posicion ultimo marcador y nuevo marcador
+            marcadorAmbulancia.setPosition(posicionAmbu);
+        }else {
+            marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
+            float distancia = mylocation.distanceTo(ambuLocation);
+            if (distancia<20){
+                timer.cancel();
+                timerTask.cancel();
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(MapsActivity_Seguimiento.this);
+                irCalificar = builder2.create();
+                builder2.setTitle("Su ambulancia ha llegado")
+                        .setMessage("Desea calificar servicio?")
+                        .setCancelable(false).setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent irAcalificar= new Intent(MapsActivity_Seguimiento.this,CalificacionServicioActivity.class);
+                        irAcalificar.putExtra("IdAmbulancia",ubicacionParamedicoDto.getCedula());
+                        startActivity(irAcalificar);
+                        finish();
+                    }
+                }).setNegativeButton("No, Gracias", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent salir = new Intent(MapsActivity_Seguimiento.this, MapActivity_Pedido.class);
+                        startActivity(salir);
+                        finish();
+                    }
+                });
+                builder2.show();
+            }
+        }
+
     }
 
     @Override
@@ -135,8 +192,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                 handler.post(new Runnable() {
                     public void run() {
                         //get the current timeStamp
-
-                        ActualizarUbicacionAmbulancias();
+                     //   ActualizarUbicacionAmbulancias();
                     }
                 });
             }
@@ -207,7 +263,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 ///////////////////Actualizar posicion ambulancia//////////////////////////////////////////////////
 
     private void ActualizarUbicacionAmbulancias(){
-        final   Intent a = getIntent();
+        /*final   Intent a = getIntent();
         GetAsyncrona Actualizar = new GetAsyncrona();
         try {
             String resultado =  Actualizar.execute(DIR_URL + a.getStringExtra("IdAmbulancia")).get();
@@ -223,9 +279,6 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                 );
 
                 marcadorAmbulancia.setPosition(posicionAmbu);
-               /* marcadorAmbulancia.remove();
-                marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu)
-                                          .icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));*/
             }else {
                 marcadorAmbulancia = mMap2.addMarker(new MarkerOptions().title("Ambulancia").position(posicionAmbu)
                                           .icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
@@ -263,7 +316,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         } catch (ExecutionException e) {
             System.out.println("Error e");
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override

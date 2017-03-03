@@ -17,7 +17,7 @@ public class CalificacionServicioActivity extends AppCompatActivity {
     Gson jsson = new Gson();
     RadioGroup radioGroup;
     CalificacionDto calificacion;
-    public static final String URL_CALIFICAR = "http://190.109.185.138:8013/api/Calificar";
+    public static final String URL_CALIFICAR = "http://myambulancia.azurewebsites.net/api/Calificar";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

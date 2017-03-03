@@ -49,12 +49,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -66,18 +73,21 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     public GoogleApiClient mGoogleApiClient;
     Button btnEnviarAlerta;
     EditText edtDireccion;
-    RadioGroup rGrpTipoEmergencia;
-    RadioGroup rGrpNumPacientes;
+    RadioGroup rGrpTipoEmergencia, rGrpNumPacientes;
     Context cnt;
     UbicacionPacienteDto ubicacionPaciente;
     FirebaseDatabase database;
     DatabaseReference reference;
+    ArrayList<String> keysAmbulancias;
+    ArrayList<Location> ambuLocations;
+    ArrayList<Float> distancias;
+    String idAmbulancia;
 
     //Variable para guardar la posicion inicial del equipo
     private Location posicionActual = null;
     //Variable para guardar al mejor proveedor para obtener la ubicacion
     String MejorProveedor = null;
-    private static String DIR_URL = "http://190.109.185.138:8013/api/";
+    private static String DIR_URL = "http://myambulancia.azurewebsites.net/api/PedidoAmbulancia";
     private LocationManager locationMangaer = null;
     //Listener de ubicacion
     private LocationListener locationListener = null;
@@ -87,7 +97,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     private static int RADIO_ACTUALIZACION = 1;
     final Gson gsson = new Gson();
     ProgressDialog progress;
-   // StringBuilder total;
+    int menorDistancia;
 
     BDPedidos baseDatosPedidos;
     @Override
@@ -109,6 +119,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     .addOnConnectionFailedListener(this)
                     .build();
         }
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference("");
 
         baseDatosPedidos = new BDPedidos(MapActivity_Pedido.this,"My BaseDatos",null, 1);
         Log.e("nombre DB: ",baseDatosPedidos.getDatabaseName());
@@ -116,45 +128,20 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
         SQLiteDatabase db1 = baseDatosPedidos.getWritableDatabase();
 
-
-
         db1.close();
-       // SQLiteDatabase db = baseDatosPedidos.getReadableDatabase();
-       // db.execSQL("INSERT INTO TablaPedidos (Pedidos) VALUES('"+"Hola"+"')");
-       // db.close();
+
+        distancias = new ArrayList<>();
+        ambuLocations = new ArrayList<>();
+        keysAmbulancias = new ArrayList<>();
+
+
         cnt = this;
-        //   Bundle extras = getIntent().getExtras();
-        //   Address[] direcciones = (Address[]) extras.get("Direcciones");
-        //   Toast.makeText(MapActivity_Pedido.this,"Clinica asignada: "+direcciones[0].getFeatureName(),Toast.LENGTH_LONG).show();
-        //   final ProgressDialog progress = new ProgressDialog(this);
         progress = new ProgressDialog(this);
         progress.setTitle("Enviando emergencia");
         progress.setMessage("Por favor espere");
 
-        locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
-        //this to set delegate/listener back to this class
-
-        Criteria req = new Criteria();
-        req.setAccuracy(Criteria.ACCURACY_FINE);
-        req.setAltitudeRequired(true);
-
-        //Mejor proveedor por criterio
-        MejorProveedor = locationMangaer.getBestProvider(req, false);
-
         ubicacionPaciente = new UbicacionPacienteDto();
-    //Configuramos el listener para que verifique la ubicaciones cada 10000 milisegundos y 20 metros, si cumple las dos condiciones
-        //se dispara el metodo
-        locationListener = new MiUbicacion();
-        locationMangaer.requestLocationUpdates(MejorProveedor, TIEMPO_ACTUALIZACION, RADIO_ACTUALIZACION, locationListener);
-        boolean network_enabled = locationMangaer.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        if (network_enabled) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-            }
 
-        }
         mapFragment.getMapAsync(this);
         btnEnviarAlerta = (Button) findViewById(R.id.btnCancelarPedido);
         edtDireccion = (EditText) findViewById(R.id.edtDireccion);
@@ -192,13 +179,14 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             }
         });
 
+        final Toast escoja_num_pacientes = Toast.makeText(getApplication(), "Por favor elija un numero de pacientes", Toast.LENGTH_SHORT);
+        final Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(), "Por favor elija un tipo de Emergencia", Toast.LENGTH_SHORT);
         // Boton para envio de alerta a la ambulancia
         btnEnviarAlerta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                recuperarAmbulancias();
                 //   final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
-                Toast escoja_num_pacientes = Toast.makeText(getApplication(), "Por favor elija un numero de pacientes", Toast.LENGTH_SHORT);
-                Toast escoja_tipo_emergencia = Toast.makeText(getApplicationContext(), "Por favor elija un tipo de Emergencia", Toast.LENGTH_SHORT);
                 //Validar tipo de emergencia
                 if (rGrpTipoEmergencia.getCheckedRadioButtonId() == -1) {
                     escoja_tipo_emergencia.show();
@@ -224,7 +212,31 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                                     ubicacionPaciente.setLatitud(posicionActual.getLatitude());
                                     ubicacionPaciente.setLongitud(posicionActual.getLongitude());
                                     ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-                                    EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
+                                    ubicacionPaciente.setAceptado(false);
+                                    reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente);
+                                    reference.child("Ambulancias").child(idAmbulancia).child("Pedido").child("aceptado").addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            Log.e("data key: ",dataSnapshot.getKey());
+                                            boolean aceptado = (boolean)dataSnapshot.getValue();
+                                            Log.e("boolean: ",String.valueOf(dataSnapshot.getValue()));
+                                            if (aceptado){ //aceptado es True
+                                                progress.dismiss();
+                                                //pasar a seguimiento:
+                                                irAseguimiento();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+                                   // reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).child("aceptado").setValue(true);
+                                    pedidoFirebase(ubicacionPaciente);
+                                    //EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
+
                                 }
                             };
                             Handler pdCanceller = new Handler();
@@ -238,6 +250,85 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             }
 
         });
+
+    }
+
+    private void irAseguimiento() {
+        final double[] latAmbu = new double[1];
+        final double[] lonAmbu = new double[1];
+        reference.child("Ambulancias").child(idAmbulancia).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                latAmbu[0] = (double)snapshot.child("latitud").getValue();
+                lonAmbu[0] = (double)snapshot.child("longitud").getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        Intent i = new Intent(this, MapsActivity_Seguimiento.class);
+        //guardar variables en intent
+        i.putExtra("LatAmbulancia", latAmbu[0]).putExtra("LongAmbulancia", lonAmbu[0]);
+        //i.putExtra("MiLatitud",ubicacion.getLatitud()).putExtra("MiLongitud",ubicacion.getLongitud());
+        i.putExtra("IdAmbulancia", idAmbulancia);
+
+        //Log.e("Idambulanciarecibido", outputtojson.getCedula());
+        i.putExtra("ab",ubicacionPaciente);
+        startActivity(i);
+    }
+
+    private void pedidoFirebase(UbicacionPacienteDto ubicacionPaciente) {
+        reference.child("Ambulancias").child(keysAmbulancias.get(menorDistancia)).child("Pedido").setValue(ubicacionPaciente);
+    }
+
+
+    private void recuperarAmbulancias() {
+        Query consulta = reference.child("Ambulancias").orderByKey();
+        if (consulta != null){
+
+            consulta.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    compararDistancias(dataSnapshot);
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            Log.e("la consulta es", " exitosa");
+        }else {
+            Log.e("la consulta es", " nula");
+        }
+
+    }
+
+    private void compararDistancias(DataSnapshot dataSnapshot) {
+        int c = 0;
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+            //Llenar una lista con los keys de las ambulancias
+            keysAmbulancias.add(snapshot.getKey());
+            // Crear objeto latlng y guardarlo en una lista
+            double latiAmbu = (double)snapshot.child("latitud").getValue();
+            double longAmbu = (double)snapshot.child("longitud").getValue();
+
+            Location location = new Location("");
+            location.setLatitude(latiAmbu);
+            location.setLongitude(longAmbu);
+            ambuLocations.add(location);
+            Log.e("key:", keysAmbulancias.get(c));
+            c++;
+            distancias.add(posicionActual.distanceTo(location));
+
+        }
+        menorDistancia = distancias.indexOf(Collections.min(distancias));  // devuelve el indice de la posicion de la ambulancia mas cercana
+        Log.e("menorDistancia:", String.valueOf(menorDistancia));
+        idAmbulancia = keysAmbulancias.get(menorDistancia);
     }
 
     @Override
@@ -319,35 +410,16 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-
         mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         mMap.setMyLocationEnabled(true);
-/*
-        boolean network_enabled = locationMangaer.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        if (network_enabled) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-            }
-            Location location = locationMangaer.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if (location != null) {
-                posicionActual = location;
-                //CrearMarcador(location, "Tu Ubicación");
-
-            }
-        }*/
     }
 
     //metodo para crear marcadores
     public void CrearMarcador(Location location, String Titulo)
     {
-        database = FirebaseDatabase.getInstance();
-        reference = database.getReference("");
-
 
         reference.child("Pedidos").child("Pedido" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente.getIdPaciente());
         mMap.clear();
@@ -377,7 +449,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             e.printStackTrace();
         }
     }
-
+/*
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(final UbicacionPacienteDto ubicacion, final Context context)  {
         PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), context,
@@ -412,7 +484,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             e.printStackTrace();
         }
     }
-
+*/
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
     //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
     private class MiUbicacion implements LocationListener
