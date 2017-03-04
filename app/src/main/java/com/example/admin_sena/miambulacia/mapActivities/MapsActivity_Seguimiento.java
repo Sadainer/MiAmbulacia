@@ -261,9 +261,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         Log.e("despues de ","execute");
     }
 ///////////////////Actualizar posicion ambulancia//////////////////////////////////////////////////
-
+/*
     private void ActualizarUbicacionAmbulancias(){
-        /*final   Intent a = getIntent();
+        final   Intent a = getIntent();
         GetAsyncrona Actualizar = new GetAsyncrona();
         try {
             String resultado =  Actualizar.execute(DIR_URL + a.getStringExtra("IdAmbulancia")).get();
@@ -316,9 +316,9 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
         } catch (ExecutionException e) {
             System.out.println("Error e");
             e.printStackTrace();
-        }*/
+        }
     }
-
+*/
     @Override
     protected void onRestart() {
         super.onRestart();
