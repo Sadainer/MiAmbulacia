@@ -10,6 +10,15 @@ public class UbicacionPacienteDto implements Serializable {
     private int NumeroPacientes;
     private String Direccion;
     private boolean Aceptado;
+    private String Fecha;
+
+    public String getFecha() {
+        return Fecha;
+    }
+
+    public void setFecha(String fecha) {
+        Fecha = fecha;
+    }
 
     public boolean isAceptado() {
         return Aceptado;

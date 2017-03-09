@@ -59,7 +59,10 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -85,17 +88,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     //Variable para guardar la posicion inicial del equipo
     private Location posicionActual = null;
-    //Variable para guardar al mejor proveedor para obtener la ubicacion
-    String MejorProveedor = null;
-    private static String DIR_URL = "http://myambulancia.azurewebsites.net/api/PedidoAmbulancia";
-    private LocationManager locationMangaer = null;
-    //Listener de ubicacion
-    private LocationListener locationListener = null;
-    //Variable que controla el tiempo en que se actualiza la ubicacion en segundos
-    private static int TIEMPO_ACTUALIZACION = 10;
-    //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
-    private static int RADIO_ACTUALIZACION = 1;
-    final Gson gsson = new Gson();
+
     ProgressDialog progress;
     int menorDistancia;
 
@@ -207,12 +200,15 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
                                 @Override
                                 public void run() {
+                                    DateFormat df = new SimpleDateFormat("dd/MM/yyyy, HH:mm", Locale.US);
+                                    String date = df.format(Calendar.getInstance().getTime());
                                     SecureRandom secureRandom = new SecureRandom();
                                     ubicacionPaciente.setIdPaciente(String.valueOf(secureRandom.nextInt()));
                                     ubicacionPaciente.setLatitud(posicionActual.getLatitude());
                                     ubicacionPaciente.setLongitud(posicionActual.getLongitude());
                                     ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
                                     ubicacionPaciente.setAceptado(false);
+                                    ubicacionPaciente.setFecha(date);
                                     reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente);
                                     reference.child("Ambulancias").child(idAmbulancia).child("Pedido").child("aceptado").addValueEventListener(new ValueEventListener() {
                                         @Override
@@ -449,62 +445,10 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             e.printStackTrace();
         }
     }
-/*
-    //Metodo para enviar Ubicacion al servidor
-    private void EnviarUbicacion(final UbicacionPacienteDto ubicacion, final Context context)  {
-        PostAsyncrona EnviarUbicacionAsyn = new PostAsyncrona(gsson.toJson(ubicacion), context,
-                new PostAsyncrona.AsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                progress.dismiss();
-                Log.e("output",output);
-                if (!(output.equals(""))){
-                 ParamedicoDto outputtojson = gsson.fromJson(output, ParamedicoDto.class);
-                    finish();
-                    Intent i = new Intent(context,MapsActivity_Seguimiento.class);
-                    //guardar variables en intent
-                    i.putExtra("LatAmbulancia",outputtojson.getLatitud()).putExtra("LongAmbulancia",outputtojson.getLongitud());
-                    i.putExtra("MiLatitud",ubicacion.getLatitud()).putExtra("MiLongitud",ubicacion.getLongitud());
-                    i.putExtra("IdAmbulancia", outputtojson.getCedula());
-                    Log.e("Idambulanciarecibido", outputtojson.getCedula());
-                    i.putExtra("ab",ubicacion);
-                    startActivity(i);
-                }
-            }
 
-        });
-        try {
-            EnviarUbicacionAsyn.execute(DIR_URL + "PedidoAmbulancia").get();
-
-        } catch (InterruptedException e) {
-            System.out.println("Error i");
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            System.out.println("Error e");
-            e.printStackTrace();
-        }
-    }
-*/
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
     //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
-    private class MiUbicacion implements LocationListener
-    {
-        @Override
-        public void onLocationChanged(Location location) {
-            posicionActual= location;
-//            CrearMarcador(location, "Tu Ubicación");
-        }
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-        @Override
-        public void onProviderDisabled(String provider) {
 
-        }
-    }
     @Override
     protected void onStop() {
         super.onStop();
