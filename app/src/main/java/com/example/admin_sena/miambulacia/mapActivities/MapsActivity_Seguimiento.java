@@ -15,13 +15,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.example.admin_sena.miambulacia.BDPedidos;
 import com.example.admin_sena.miambulacia.CalificacionServicioActivity;
-import com.example.admin_sena.miambulacia.ClasesAsincronas.GetAsyncrona;
-import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.miambulacia.Dto.CancelPedidoDto;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
-import com.example.admin_sena.miambulacia.Dto.UbicacionParamedicoDto;
 import com.example.admin_sena.miambulacia.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,8 +27,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,7 +37,6 @@ import com.google.gson.Gson;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
 
 public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapReadyCallback {
 
@@ -59,7 +52,6 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     Marker marcadorAmbulancia;
     Location mylocation = new Location("point b"), ambuLocation = new Location("point a");
     AlertDialog alert, irCalificar;
-    UbicacionParamedicoDto ubicacionParamedicoDto;
     FirebaseDatabase database;
     DatabaseReference reference;
     String idAmbulancia;
@@ -177,7 +169,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent irAcalificar= new Intent(MapsActivity_Seguimiento.this,CalificacionServicioActivity.class);
-                                    irAcalificar.putExtra("IdAmbulancia",ubicacionParamedicoDto.getCedula());
+                                    irAcalificar.putExtra("IdAmbulancia", idAmbulancia);
                                     startActivity(irAcalificar);
                                     finish();
                                 }
@@ -198,7 +190,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     }
 
     public void cancelarPedido(View view){
-        final CancelPedidoDto cancelPedidoDto = new CancelPedidoDto(ubicacionParamedicoDto.getCedula());
+        final CancelPedidoDto cancelPedidoDto = new CancelPedidoDto(idAmbulancia);
 
 
         final String[] items = {"Me equivoque", "Llegó otra ambulancia","Ya no es necesario el servicio"};
@@ -212,7 +204,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                     public void onClick(DialogInterface dialog, int id) {
                         enviarCancelarEmergencia(cancelPedidoDto);
                         Intent irAcalificar= new Intent(MapsActivity_Seguimiento.this,CalificacionServicioActivity.class);
-                        irAcalificar.putExtra("IdAmbulancia",ubicacionParamedicoDto.getCedula());
+                        irAcalificar.putExtra("IdAmbulancia", idAmbulancia);
                         reference.child("Pedidos").child("Pedido" + miUbicacion.getIdPaciente()).child("Cancelado").setValue(true);
                         Log.e("Pedido cancelado","Pedido");
                         startActivity(irAcalificar);

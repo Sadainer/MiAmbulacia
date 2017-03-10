@@ -10,7 +10,15 @@ public class UbicacionPacienteDto implements Serializable {
     private int NumeroPacientes;
     private String Direccion;
     private boolean Aceptado;
-    private String Fecha;
+    private String Fecha, idAmbulancia;
+
+    public String getIdAmbulancia() {
+        return idAmbulancia;
+    }
+
+    public void setIdAmbulancia(String idAmbulancia) {
+        this.idAmbulancia = idAmbulancia;
+    }
 
     public String getFecha() {
         return Fecha;

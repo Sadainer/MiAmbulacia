@@ -209,6 +209,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                                     ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
                                     ubicacionPaciente.setAceptado(false);
                                     ubicacionPaciente.setFecha(date);
+                                    ubicacionPaciente.setIdAmbulancia(idAmbulancia);
                                     reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente);
                                     reference.child("Ambulancias").child(idAmbulancia).child("Pedido").child("aceptado").addValueEventListener(new ValueEventListener() {
                                         @Override
@@ -217,6 +218,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                                             boolean aceptado = (boolean)dataSnapshot.getValue();
                                             Log.e("boolean: ",String.valueOf(dataSnapshot.getValue()));
                                             if (aceptado){ //aceptado es True
+                                                database.getReference("RegistrosAmbulancias/"+idAmbulancia+"/Pedidos/"+ubicacionPaciente.getIdPaciente()).setValue(true);
                                                 progress.dismiss();
                                                 //pasar a seguimiento:
                                                 irAseguimiento();
