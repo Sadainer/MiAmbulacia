@@ -12,6 +12,10 @@ android {
         versionName "1.0"
         multiDexEnabled true
     }
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
+    }
     buildTypes {
         release {
             minifyEnabled false

@@ -95,7 +95,8 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     private void actualizarPosicionAmbulancia(DataSnapshot dataSnapshot) {
         double latAmbu = (double)dataSnapshot.child("latitud").getValue();
         double lngAmbu = (double)dataSnapshot.child("longitud").getValue();
-
+        ambuLocation.setLatitude(latAmbu);
+        ambuLocation.setLongitude(lngAmbu);
         LatLng posicionAmbu = new LatLng(latAmbu, lngAmbu);
         if (marcadorAmbulancia!=null){          /////El marcador ya se dibujo por primera vez y debe borrarse para dibujar otro.
                                                 //Dibujar polilinea entre posicion ultimo marcador y nuevo marcador
@@ -158,7 +159,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                         //
                         float distancia = mylocation.distanceTo(ambuLocation);
                         Log.e("distancia ", String.valueOf(distancia));
-                        if (distancia<20){
+                        if (distancia<20.0){
                             timer.cancel();
                             timerTask.cancel();
                             AlertDialog.Builder builder2 = new AlertDialog.Builder(MapsActivity_Seguimiento.this);
