@@ -170,7 +170,7 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent irAcalificar= new Intent(MapsActivity_Seguimiento.this,CalificacionServicioActivity.class);
-                                    irAcalificar.putExtra("IdAmbulancia", idAmbulancia);
+                                    irAcalificar.putExtra("IdPedido", miUbicacion.getIdPaciente());
                                     startActivity(irAcalificar);
                                     finish();
                                 }

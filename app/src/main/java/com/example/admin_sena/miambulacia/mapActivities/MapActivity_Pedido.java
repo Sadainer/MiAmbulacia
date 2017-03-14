@@ -2,6 +2,7 @@ package com.example.admin_sena.miambulacia.mapActivities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -10,12 +11,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -31,8 +28,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin_sena.miambulacia.BDPedidos;
-import com.example.admin_sena.miambulacia.ClasesAsincronas.PostAsyncrona;
-import com.example.admin_sena.miambulacia.Dto.ParamedicoDto;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
 import com.example.admin_sena.miambulacia.HistorialActivity;
 import com.example.admin_sena.miambulacia.R;
@@ -55,7 +50,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -63,11 +57,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
 
 
 public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -178,8 +171,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         btnEnviarAlerta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recuperarAmbulancias();
-                //   final Dialog dialogo = new Dialog(MapActivity_Pedido.this);
                 //Validar tipo de emergencia
                 if (rGrpTipoEmergencia.getCheckedRadioButtonId() == -1) {
                     escoja_tipo_emergencia.show();
@@ -188,67 +179,70 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 else if (rGrpNumPacientes.getCheckedRadioButtonId() == -1) {
                     escoja_num_pacientes.show();
                 } else {
+                    recuperarAmbulancias();
 
-                    CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
-                    dialog.show();
-                    dialog.setTitle("Enviar Emergencia?");
-                    dialog.setCancelable(false);
-                    dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            Runnable progressRunnable = new Runnable() {
 
-                                @Override
-                                public void run() {
-                                    DateFormat df = new SimpleDateFormat("dd/MM/yyyy, HH:mm", Locale.US);
-                                    String date = df.format(Calendar.getInstance().getTime());
-                                    SecureRandom secureRandom = new SecureRandom();
-                                    ubicacionPaciente.setIdPaciente(String.valueOf(secureRandom.nextInt()));
-                                    ubicacionPaciente.setLatitud(posicionActual.getLatitude());
-                                    ubicacionPaciente.setLongitud(posicionActual.getLongitude());
-                                    ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
-                                    ubicacionPaciente.setAceptado(false);
-                                    ubicacionPaciente.setFecha(date);
-                                    ubicacionPaciente.setIdAmbulancia(idAmbulancia);
-                                    reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente);
-                                    reference.child("Ambulancias").child(idAmbulancia).child("Pedido").child("aceptado").addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            Log.e("data key: ",dataSnapshot.getKey());
-                                            boolean aceptado = (boolean)dataSnapshot.getValue();
-                                            Log.e("boolean: ",String.valueOf(dataSnapshot.getValue()));
-                                            if (aceptado){ //aceptado es True
-                                                database.getReference("RegistrosAmbulancias/"+idAmbulancia+"/Pedidos/"+ubicacionPaciente.getIdPaciente()).setValue(true);
-                                                progress.dismiss();
-                                                //pasar a seguimiento:
-                                                irAseguimiento();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
-                                        }
-                                    });
-
-                                   // reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).child("aceptado").setValue(true);
-                                    pedidoFirebase(ubicacionPaciente);
-                                    //EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
-
-                                }
-                            };
-                            Handler pdCanceller = new Handler();
-                            pdCanceller.postDelayed(progressRunnable, 1000);
-                            ///////////////Mostrar Progress Dialog
-                            progress.show();
-                        }
-                    });
                 }
 
             }
 
         });
 
+    }
+
+    private void mostrarDialogo2() {
+        CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
+        dialog.show();
+        dialog.setTitle("Enviar Emergencia?");
+        dialog.setCancelable(false);
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                Runnable progressRunnable = new Runnable() {
+
+                    @Override
+                    public void run() {
+                        DateFormat df = new SimpleDateFormat("dd/MM/yyyy, HH:mm", Locale.US);
+                        String date = df.format(Calendar.getInstance().getTime());
+                        SecureRandom secureRandom = new SecureRandom();
+                        ubicacionPaciente.setIdPaciente(String.valueOf(secureRandom.nextInt()));
+                        ubicacionPaciente.setLatitud(posicionActual.getLatitude());
+                        ubicacionPaciente.setLongitud(posicionActual.getLongitude());
+                        ubicacionPaciente.setDireccion(edtDireccion.getText().toString());
+                        ubicacionPaciente.setAceptado(false);
+                        ubicacionPaciente.setFecha(date);
+                        ubicacionPaciente.setIdAmbulancia(idAmbulancia);
+                        reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente);
+                        reference.child("Ambulancias").child(idAmbulancia).child("Pedido").child("aceptado").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Log.e("data key: ",dataSnapshot.getKey());
+                                boolean aceptado = (boolean)dataSnapshot.getValue();
+                                Log.e("boolean: ",String.valueOf(dataSnapshot.getValue()));
+                                if (aceptado){ //aceptado es True
+                                    database.getReference("RegistrosAmbulancias/"+idAmbulancia+"/Pedidos/"+ubicacionPaciente.getIdPaciente()).setValue(true);
+                                    progress.dismiss();
+                                    //pasar a seguimiento:
+                                    irAseguimiento();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                        // reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).child("aceptado").setValue(true);
+                        pedidoFirebase(ubicacionPaciente);
+                        //EnviarUbicacion(ubicacionPaciente, MapActivity_Pedido.this);
+                    }
+                };
+                Handler pdCanceller = new Handler();
+                pdCanceller.postDelayed(progressRunnable, 1000);
+                ///////////////Mostrar Progress Dialog
+                progress.show();
+            }
+        });
     }
 
     private void irAseguimiento() {
@@ -285,12 +279,40 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     private void recuperarAmbulancias() {
         Query consulta = reference.child("Ambulancias").orderByKey();
-        if (consulta != null){
+
 
             consulta.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    compararDistancias(dataSnapshot);
+                    if(dataSnapshot.getValue() != null){
+                        Log.e("la consulta es", " exitosa");
+                        compararDistancias(dataSnapshot);
+                        mostrarDialogo2();
+                    }else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity_Pedido.this);
+                        builder.setIcon(R.mipmap.ic_launcher)
+                                .setCancelable(false)
+                                .setTitle("No hay ambulancias disponibles")
+                                .setPositiveButton("Llamar al CRUE", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+
+                                    }
+                                })
+                                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        builder.create();
+                        builder.show();
+                        Log.e("la consulta es", " nula");
+
+
+                    }
+
 
                 }
 
@@ -299,10 +321,9 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
                 }
             });
-            Log.e("la consulta es", " exitosa");
-        }else {
-            Log.e("la consulta es", " nula");
-        }
+
+
+
 
     }
 
@@ -327,6 +348,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         menorDistancia = distancias.indexOf(Collections.min(distancias));  // devuelve el indice de la posicion de la ambulancia mas cercana
         Log.e("menorDistancia:", String.valueOf(menorDistancia));
         idAmbulancia = keysAmbulancias.get(menorDistancia);
+
+
     }
 
     @Override
