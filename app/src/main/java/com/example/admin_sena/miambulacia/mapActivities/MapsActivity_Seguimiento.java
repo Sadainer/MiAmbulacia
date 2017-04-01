@@ -7,18 +7,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.admin_sena.miambulacia.CalificacionServicioActivity;
 import com.example.admin_sena.miambulacia.Dto.CancelPedidoDto;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
 import com.example.admin_sena.miambulacia.R;
+import com.example.admin_sena.miambulacia.rutas.DirectionFinder;
+import com.example.admin_sena.miambulacia.rutas.PasarUbicacion;
+import com.example.admin_sena.miambulacia.rutas.Route;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,6 +35,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,10 +45,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity_Seguimiento extends AppCompatActivity implements OnMapReadyCallback, PasarUbicacion {
 
     private GoogleMap mMap2;
 
@@ -48,13 +60,14 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     Gson jsson = new Gson();
     final Handler handler = new Handler();
     UbicacionPacienteDto miUbicacion = new UbicacionPacienteDto();
-    LatLng MiPosicion = new LatLng(0, 0);
+    LatLng MiPosicion = new LatLng(0, 0), ambuLatLng;
     Marker marcadorAmbulancia;
     Location mylocation = new Location("point b"), ambuLocation = new Location("point a");
     AlertDialog alert, irCalificar;
     FirebaseDatabase database;
     DatabaseReference reference;
     String idAmbulancia;
+    private List<Polyline> polylinePaths = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +103,21 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
             }
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_seguimiento, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // solo hay una opcion :)
+        ambuLatLng = new LatLng(ambuLocation.getLatitude(), ambuLocation.getLongitude());
+        DirectionFinder buscador = new DirectionFinder(this, MiPosicion, ambuLatLng);
+        buscador.peticionRutas();
+        return super.onOptionsItemSelected(item);
     }
 
     private void actualizarPosicionAmbulancia(DataSnapshot dataSnapshot) {
@@ -245,7 +273,6 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
 
         Log.e("despues de ","execute");
     }
-///////////////////Actualizar posicion ambulancia//////////////////////////////////////////////////
 
     @Override
     protected void onRestart() {
@@ -262,5 +289,29 @@ public class MapsActivity_Seguimiento extends FragmentActivity implements OnMapR
     protected void onDestroy() {
 
         super.onDestroy();
+    }
+
+    @Override
+    public void trazarRutas(List<Route> rutas) {
+        Log.e("Trazar rutas","trazando rutas");
+        for (Route route : rutas) {
+            PolylineOptions polylineOptions = new PolylineOptions().
+                    geodesic(true).
+                    color(Color.BLUE).
+                    width(10);
+
+            for (int i = 0; i < route.points.size(); i++)
+                polylineOptions.add(route.points.get(i));
+            polylinePaths.add(mMap2.addPolyline(polylineOptions));
+        }
+        View padre = findViewById(R.id.seguimiento);
+        final Snackbar snack = Snackbar.make(padre, "Ambulancia llegara en" + rutas.get(0).duration.text, Snackbar.LENGTH_LONG);
+                snack.setActionTextColor(Color.CYAN)
+                .setAction("Ok", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        snack.dismiss();
+                    }
+                }).show();
     }
 }

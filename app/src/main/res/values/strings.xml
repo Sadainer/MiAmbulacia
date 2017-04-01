@@ -41,4 +41,5 @@
 
     <!--  strings HISTORIAL  -->
     <string name="st_TituloHistorialActivity">Historial</string>
+    <string name="mostrar_ruta">Mostrar Ruta</string>
 </resources>

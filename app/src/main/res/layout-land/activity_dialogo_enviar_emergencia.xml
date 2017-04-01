@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/btn_grabar_audio"
                 android:background="@drawable/boton_voz"
-        android:src="@drawable/icon_voz"
+                android:src="@android:drawable/ic_btn_speak_now"
                 android:layout_margin="@dimen/activity_horizontal_margin" />
 
         </LinearLayout>

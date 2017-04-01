@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
-
+    android:id="@+id/seguimiento"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:keepScreenOn="true"
@@ -11,6 +11,7 @@
     tools:context=".mapActivities.MapsActivity_Seguimiento">
 
         <fragment
+
             tools:context="com.example.admin_sena.miambulacia.maps_activity_seguimiento"
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"

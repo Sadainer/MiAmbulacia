@@ -297,7 +297,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-
                                     }
                                 })
                                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -310,12 +309,9 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                         builder.show();
                         Log.e("la consulta es", " nula");
 
-
                     }
 
-
                 }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
