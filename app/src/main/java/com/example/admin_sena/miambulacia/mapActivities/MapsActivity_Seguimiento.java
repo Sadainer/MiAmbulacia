@@ -45,8 +45,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -67,6 +70,10 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements OnMap
     FirebaseDatabase database;
     DatabaseReference reference;
     String idAmbulancia;
+
+    SimpleDateFormat sdf;
+    String currentDateandTime;
+
     private List<Polyline> polylinePaths = new ArrayList<>();
 
     @Override
@@ -89,6 +96,7 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements OnMap
 
         db.execSQL("INSERT INTO TablaPedidos (Pedidos) VALUES('"+saveInDB+"')");
         db.close();
+        sdf = new SimpleDateFormat("yyyy:MM:dd_HH:mm:ss", Locale.US);
 
         reference.child("Ambulancias").child(idAmbulancia).addValueEventListener(new ValueEventListener() {
             @Override
@@ -169,6 +177,7 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements OnMap
         //onResume we start our timer so it can start when the app comes from the background
         startTimer();
     }
+
     public void startTimer() {
         //set a new Timer
         timer = new Timer();
@@ -190,6 +199,10 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements OnMap
                         if (distancia<20.0){
                             timer.cancel();
                             timerTask.cancel();
+                            //primer tiempo para medicion
+                            currentDateandTime = sdf.format(new Date());
+                            reference.child("Pedidos").child("Pedido:" + idAmbulancia).child("tiempos").child("3").setValue(currentDateandTime);
+
                             AlertDialog.Builder builder2 = new AlertDialog.Builder(MapsActivity_Seguimiento.this);
                             irCalificar = builder2.create();
                             builder2.setTitle("Su ambulancia ha llegado")

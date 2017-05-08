@@ -58,6 +58,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -81,7 +82,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     //Variable para guardar la posicion inicial del equipo
     private Location posicionActual = null;
-
+    SimpleDateFormat sdf;
+    String currentDateandTime;
     ProgressDialog progress;
     int menorDistancia;
 
@@ -112,6 +114,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         Log.e("nombre DB: ",baseDatosPedidos.getDatabaseName());
         Log.e("PATH DB: ", getApplicationContext().getDatabasePath(baseDatosPedidos.getDatabaseName()).getPath());
 
+        sdf = new SimpleDateFormat("yyyy:MM:dd_HH:mm:ss", Locale.US);
+
         SQLiteDatabase db1 = baseDatosPedidos.getWritableDatabase();
 
         db1.close();
@@ -119,7 +123,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         distancias = new ArrayList<>();
         ambuLocations = new ArrayList<>();
         keysAmbulancias = new ArrayList<>();
-
 
         cnt = this;
         progress = new ProgressDialog(this);
@@ -180,8 +183,6 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                     escoja_num_pacientes.show();
                 } else {
                     recuperarAmbulancias();
-
-
                 }
 
             }
@@ -221,6 +222,10 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                                 Log.e("boolean: ",String.valueOf(dataSnapshot.getValue()));
                                 if (aceptado){ //aceptado es True
                                     database.getReference("RegistrosAmbulancias/"+idAmbulancia+"/Pedidos/"+ubicacionPaciente.getIdPaciente()).setValue(true);
+                                    //primer tiempo para medicion
+                                    currentDateandTime = sdf.format(new Date());
+                                    reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).child("tiempos").child("2").setValue(currentDateandTime);
+
                                     progress.dismiss();
                                     //pasar a seguimiento:
                                     irAseguimiento();
@@ -273,13 +278,19 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     }
 
     private void pedidoFirebase(UbicacionPacienteDto ubicacionPaciente) {
+        //se le hace el pedido a la ambulancia mas cercana
         reference.child("Ambulancias").child(keysAmbulancias.get(menorDistancia)).child("Pedido").setValue(ubicacionPaciente);
+
+        //primer tiempo para medicion
+        currentDateandTime = sdf.format(new Date());
+        reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).child("tiempos").child("1").setValue(currentDateandTime);
+
+
     }
 
 
     private void recuperarAmbulancias() {
         Query consulta = reference.child("Ambulancias").orderByKey();
-
 
             consulta.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
