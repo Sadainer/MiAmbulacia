@@ -145,7 +145,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 } else if (checkedId == R.id.radPaciente3) {
                     ubicacionPaciente.setNumeroPacientes(3);
                 } else if (checkedId == R.id.radPacienteMultiple) {
-                    ubicacionPaciente.setNumeroPacientes(0);
+                    ubicacionPaciente.setNumeroPacientes(4);
                 }
             }
         });
