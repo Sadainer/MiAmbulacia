@@ -61,8 +61,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
 
 public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -478,8 +476,11 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         }
     }
 
-    //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
-    //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
+    @Override
+    protected void onDestroy() {
+        mGoogleApiClient.disconnect();
+        super.onDestroy();
+    }
 
     @Override
     protected void onStop() {

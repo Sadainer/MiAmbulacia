@@ -8,21 +8,15 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.admin_sena.miambulacia.BDPedidos;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
 import com.example.admin_sena.miambulacia.mapActivities.MapActivity_Pedido;
 import com.google.gson.Gson;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class HistorialActivity extends AppCompatActivity {
@@ -38,18 +32,13 @@ public class HistorialActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historial);
 
-
-
         tvDataBaseVacia =(TextView)findViewById(R.id.tvDataBaseVacia);
 
         //Si no hay elementos en el historial (nunca se ha hecho un pedido)
 
         miLista = new ArrayList<UbicacionPacienteDto>();
 
-
         Log.e("Path ", getApplicationContext().getDatabasePath("My BaseDatos").getPath());
-
-
 
        db = SQLiteDatabase.openDatabase(getApplicationContext().getDatabasePath("My BaseDatos").getPath(),null,SQLiteDatabase.OPEN_READWRITE);
         ///data/data/com.example.admin_sena.miambulacia/databases/My BaseDatos
@@ -98,8 +87,6 @@ public class HistorialActivity extends AppCompatActivity {
             historialRecycler.setAdapter(historialAdapter);
 
             historialRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
-
         }
 
         else{
@@ -111,11 +98,7 @@ public class HistorialActivity extends AppCompatActivity {
         }
         db.close();
         mcursor.close();
-
-
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu m) {

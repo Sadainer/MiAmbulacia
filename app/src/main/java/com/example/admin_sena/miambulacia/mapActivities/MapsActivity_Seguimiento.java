@@ -12,7 +12,6 @@ import android.location.Location;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -53,7 +52,8 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MapsActivity_Seguimiento extends AppCompatActivity implements OnMapReadyCallback, PasarUbicacion {
+public class MapsActivity_Seguimiento extends AppCompatActivity implements
+        OnMapReadyCallback, PasarUbicacion {
 
     private GoogleMap mMap2;
 
@@ -201,7 +201,7 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements OnMap
                             timerTask.cancel();
                             //primer tiempo para medicion
                             currentDateandTime = sdf.format(new Date());
-                            reference.child("Pedidos").child("Pedido:" + idAmbulancia).child("tiempos").child("3").setValue(currentDateandTime);
+                            reference.child("Pedidos").child("Pedido:" + miUbicacion.getIdPaciente()).child("tiempos").child("3").setValue(currentDateandTime);
 
                             AlertDialog.Builder builder2 = new AlertDialog.Builder(MapsActivity_Seguimiento.this);
                             irCalificar = builder2.create();

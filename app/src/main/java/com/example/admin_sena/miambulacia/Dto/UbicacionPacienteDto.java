@@ -12,24 +12,12 @@ public class UbicacionPacienteDto implements Serializable {
     private boolean Aceptado;
     private String Fecha, idAmbulancia;
 
-    public String getIdAmbulancia() {
-        return idAmbulancia;
-    }
-
     public void setIdAmbulancia(String idAmbulancia) {
         this.idAmbulancia = idAmbulancia;
     }
 
-    public String getFecha() {
-        return Fecha;
-    }
-
     public void setFecha(String fecha) {
         Fecha = fecha;
-    }
-
-    public boolean isAceptado() {
-        return Aceptado;
     }
 
     public void setAceptado(boolean aceptado) {
@@ -83,6 +71,5 @@ public class UbicacionPacienteDto implements Serializable {
     public void setLongitud(Double longitud) {
         Longitud = longitud;
     }
-
 
 }

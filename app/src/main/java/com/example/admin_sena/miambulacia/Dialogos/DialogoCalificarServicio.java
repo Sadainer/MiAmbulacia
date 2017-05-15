@@ -2,7 +2,6 @@ package com.example.admin_sena.miambulacia.Dialogos;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -22,7 +21,7 @@ public class DialogoCalificarServicio extends DialogFragment{
                 new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.activity_calificacion_servicio,null));
-    builder.setTitle("Desea calificar servicio");
+        builder.setTitle("Desea calificar servicio");
         return builder.create();
     }
 }

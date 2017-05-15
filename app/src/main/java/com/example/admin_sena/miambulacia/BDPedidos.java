@@ -5,12 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.util.Date;
-
-
 public class BDPedidos extends SQLiteOpenHelper {
 
-
+/*
 
     public static final int VERSION = 1;
     public static final String Nombre_BaseDatos = "baseDatosPedidos.db";
@@ -25,10 +22,10 @@ public class BDPedidos extends SQLiteOpenHelper {
     public static final String col_Fecha ="FECHA";
     public static final String col_NumeroPacientes ="NUMERO DE PACIENTES";
     public static final String col_Direccion ="LUGAR";
-
+*/
     ///////Sentencia SQL para crear Tabla///////////////
 
-    String sql = "CREATE TABLE TablaPedidos (ID INTEGER PRIMARY KEY AUTOINCREMENT, Pedidos TEXT)";
+    private String sql = "CREATE TABLE TablaPedidos (ID INTEGER PRIMARY KEY AUTOINCREMENT, Pedidos TEXT)";
     /*
     String sqlCreate = "Crear tabla Pedidos("+col_ID+"INTEGER,"+
             col_Fecha+"LONG,"+col_Direccion+"TEXT,"+
