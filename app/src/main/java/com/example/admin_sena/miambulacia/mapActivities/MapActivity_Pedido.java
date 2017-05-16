@@ -211,23 +211,32 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                         ubicacionPaciente.setAceptado(false);
                         ubicacionPaciente.setFecha(date);
                         ubicacionPaciente.setIdAmbulancia(idAmbulancia);
+
                         reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente);
                         reference.child("Ambulancias").child(idAmbulancia).child("Pedido").child("aceptado").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 Log.e("data key: ",dataSnapshot.getKey());
-                                boolean aceptado = (boolean)dataSnapshot.getValue();
-                                Log.e("boolean: ",String.valueOf(dataSnapshot.getValue()));
-                                if (aceptado){ //aceptado es True
-                                    database.getReference("RegistrosAmbulancias/"+idAmbulancia+"/Pedidos/"+ubicacionPaciente.getIdPaciente()).setValue(true);
-                                    //primer tiempo para medicion
-                                    currentDateandTime = sdf.format(new Date());
-                                    reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).child("tiempos").child("2").setValue(currentDateandTime);
 
-                                    progress.dismiss();
-                                    //pasar a seguimiento:
-                                    irAseguimiento();
+                                try {
+                                    boolean aceptado = (boolean)dataSnapshot.getValue();
+                                    Log.e("boolean: ",String.valueOf(dataSnapshot.getValue()));
+                                    if (aceptado){ //aceptado es True
+                                        database.getReference("RegistrosAmbulancias/"+idAmbulancia+"/Pedidos/"+ubicacionPaciente.getIdPaciente()).setValue(true);
+                                        //primer tiempo para medicion
+                                        currentDateandTime = sdf.format(new Date());
+                                        reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).child("tiempos").child("2").setValue(currentDateandTime);
+
+                                        progress.dismiss();
+                                        //pasar a seguimiento:
+                                        irAseguimiento();
+                                    }
+                                }catch (NullPointerException e){
+
+                                    Log.e("No se ha aceptado", "la emergencia");
                                 }
+
+
                             }
 
                             @Override
@@ -447,7 +456,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     public void CrearMarcador(Location location, String Titulo)
     {
 
-        reference.child("Pedidos").child("Pedido" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente.getIdPaciente());
+        //reference.child("Pedidos").child("Pedido" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente.getIdPaciente());
         mMap.clear();
         Marker marcador = mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))

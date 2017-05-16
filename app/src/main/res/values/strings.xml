@@ -42,4 +42,7 @@
     <!--  strings HISTORIAL  -->
     <string name="st_TituloHistorialActivity">Historial</string>
     <string name="mostrar_ruta">Mostrar Ruta</string>
+    <string name="numPacientes1">1</string>
+    <string name="numPacientes2">2</string>
+    <string name="numPacientes3">3</string>
 </resources>

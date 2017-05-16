@@ -60,27 +60,27 @@
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1"
+                    android:text="@string/numPacientes1"
                     android:id="@+id/radPaciente1" />
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2"
+                    android:text="@string/numPacientes2"
                     android:id="@+id/radPaciente2"
                     android:checked="false" />
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3"
+                    android:text="@string/numPacientes3"
                     android:id="@+id/radPaciente3"
                     android:checked="false" />
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/st_Multiple"
+                    android:text="4 o más"
                     android:id="@+id/radPacienteMultiple"
                     android:checked="false" />
             </RadioGroup>
