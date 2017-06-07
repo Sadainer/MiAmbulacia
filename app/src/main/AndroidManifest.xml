@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <!--uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /-->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
@@ -22,7 +22,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".actividades.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,8 +42,8 @@
             android:name=".mapActivities.MapsActivity_Seguimiento"
             android:label="@string/title_activity_maps_activity__seguimiento"
             android:screenOrientation="portrait" />
-        <activity android:name=".CalificacionServicioActivity" />
-        <activity android:name=".HistorialActivity" android:label="@string/st_TituloHistorialActivity"/>
+        <activity android:name=".actividades.CalificacionServicioActivity" />
+        <activity android:name=".actividades.HistorialActivity" android:label="@string/st_TituloHistorialActivity"/>
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.example.admin_sena.miambulacia;
+package com.example.admin_sena.miambulacia.actividades;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
+import com.example.admin_sena.miambulacia.HistorialAdapter;
+import com.example.admin_sena.miambulacia.R;
 import com.example.admin_sena.miambulacia.mapActivities.MapActivity_Pedido;
 import com.google.gson.Gson;
 
@@ -124,6 +126,20 @@ public class HistorialActivity extends AppCompatActivity {
         Intent i = new Intent(HistorialActivity.this, MapActivity_Pedido.class);
         startActivity(i);
         finish();
+        if (db.isOpen()){
+
+            db.close();
+        }
+
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (db.isOpen()){
+
+            db.close();
+        }
+
+    }
 }

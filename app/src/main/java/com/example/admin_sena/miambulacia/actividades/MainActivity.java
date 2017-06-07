@@ -1,4 +1,4 @@
-package com.example.admin_sena.miambulacia;
+package com.example.admin_sena.miambulacia.actividades;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,22 +12,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.admin_sena.miambulacia.R;
 import com.example.admin_sena.miambulacia.mapActivities.MapActivity_Pedido;
-
 
 public class MainActivity extends AppCompatActivity {
 
     LocationManager locationMangaer;
     ConnectivityManager connectivityManager;
     int requestcode = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().hide();
         connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         locationMangaer = (LocationManager) getSystemService(LOCATION_SERVICE);
-
 
         if (isOnline()) { //Si esta conectado
             if (!locationMangaer.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -62,8 +61,9 @@ public class MainActivity extends AppCompatActivity {
       {
           Intent IntEmergencia = new Intent(MainActivity.this, MapActivity_Pedido.class);
           startActivity(IntEmergencia);
+          MainActivity.this.finish();
       }
-        MainActivity.this.finish();
+
     }
     //Validar Estado de red
     public boolean isOnline() {
@@ -72,8 +72,5 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
-
-
-
 
 }

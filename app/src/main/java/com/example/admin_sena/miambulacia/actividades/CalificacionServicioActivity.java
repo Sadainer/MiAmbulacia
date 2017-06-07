@@ -1,4 +1,4 @@
-package com.example.admin_sena.miambulacia;
+package com.example.admin_sena.miambulacia.actividades;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.admin_sena.miambulacia.R;
 import com.example.admin_sena.miambulacia.mapActivities.MapActivity_Pedido;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -49,9 +50,9 @@ public class CalificacionServicioActivity extends AppCompatActivity {
     }
 
     public void salir(View v) {
+
         volver();
     }
-
 
     public void enviarCalificacion(View v) {
 
@@ -61,7 +62,8 @@ public class CalificacionServicioActivity extends AppCompatActivity {
     }
 
     private void volver() {
-        Intent intent = new Intent(CalificacionServicioActivity.this,MapActivity_Pedido.class);
+
+        Intent intent = new Intent(CalificacionServicioActivity.this, MapActivity_Pedido.class);
         startActivity(intent);
         finish();
     }

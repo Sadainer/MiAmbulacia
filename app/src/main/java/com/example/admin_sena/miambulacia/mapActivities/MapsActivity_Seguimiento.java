@@ -2,11 +2,9 @@ package com.example.admin_sena.miambulacia.mapActivities;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Handler;
@@ -19,13 +17,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.admin_sena.miambulacia.CalificacionServicioActivity;
-import com.example.admin_sena.miambulacia.Dto.CancelPedidoDto;
+import com.example.admin_sena.miambulacia.actividades.CalificacionServicioActivity;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
 import com.example.admin_sena.miambulacia.R;
 import com.example.admin_sena.miambulacia.rutas.DirectionFinder;
 import com.example.admin_sena.miambulacia.rutas.PasarUbicacion;
 import com.example.admin_sena.miambulacia.rutas.Route;
+import com.example.admin_sena.miambulacia.utils.BdPedidoAux;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -57,7 +55,6 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements
 
     private GoogleMap mMap2;
 
-    Context cnt;
     Timer timer;
     TimerTask timerTask;
     Gson jsson = new Gson();
@@ -66,7 +63,7 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements
     LatLng MiPosicion = new LatLng(0, 0), ambuLatLng;
     Marker marcadorAmbulancia;
     Location mylocation = new Location("point b"), ambuLocation = new Location("point a");
-    AlertDialog alert, irCalificar;
+    AlertDialog irCalificar;
     FirebaseDatabase database;
     DatabaseReference reference;
     String idAmbulancia;
@@ -84,18 +81,17 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment2);
         mapFragment.getMapAsync(this);
-        cnt = this;
+
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("");
         Intent a = getIntent();
         idAmbulancia = a.getStringExtra("IdAmbulancia");
-        Log.e("IdAmbulancia ",idAmbulancia);
         miUbicacion = (UbicacionPacienteDto)a.getExtras().getSerializable("ab");
-        String saveInDB = jsson.toJson(miUbicacion);
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(getApplicationContext().getDatabasePath("My BaseDatos").getPath(),null,SQLiteDatabase.OPEN_READWRITE);
 
-        db.execSQL("INSERT INTO TablaPedidos (Pedidos) VALUES('"+saveInDB+"')");
-        db.close();
+        String saveInDB = jsson.toJson(miUbicacion);
+        BdPedidoAux aux = new BdPedidoAux(this);
+        aux.guardarEnBd(saveInDB);
+
         sdf = new SimpleDateFormat("yyyy:MM:dd_HH:mm:ss", Locale.US);
 
         reference.child("Ambulancias").child(idAmbulancia).addValueEventListener(new ValueEventListener() {
@@ -115,6 +111,7 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_seguimiento, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -171,6 +168,7 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements
 
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -196,7 +194,7 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements
                         //
                         float distancia = mylocation.distanceTo(ambuLocation);
                         Log.e("distancia ", String.valueOf(distancia));
-                        if (distancia<20.0){
+                        if (distancia < 20.0){
                             timer.cancel();
                             timerTask.cancel();
                             //primer tiempo para medicion
@@ -231,69 +229,9 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements
         };
     }
 
-    public void cancelarPedido(View view){
-        final CancelPedidoDto cancelPedidoDto = new CancelPedidoDto(idAmbulancia);
-
-
-        final String[] items = {"Me equivoque", "Llegó otra ambulancia","Ya no es necesario el servicio"};
-        cancelPedidoDto.setRazonCancela(items[1]);
-        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity_Seguimiento.this);
-        alert = builder.create();
-        builder.setCancelable(false);
-        builder.setTitle("Deseo cancelar la emergencia porque...") //
-                .setCancelable(false)
-                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        enviarCancelarEmergencia(cancelPedidoDto);
-                        Intent irAcalificar= new Intent(MapsActivity_Seguimiento.this,CalificacionServicioActivity.class);
-                        irAcalificar.putExtra("IdAmbulancia", idAmbulancia);
-                        reference.child("Pedidos").child("Pedido" + miUbicacion.getIdPaciente()).child("Cancelado").setValue(true);
-                        Log.e("Pedido cancelado","Pedido");
-                        startActivity(irAcalificar);
-                        finish();
-
-                    }
-                })
-                .setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        alert.dismiss();
-
-                    }
-                })
-                .setSingleChoiceItems(items,1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
-                            case 1:
-                                cancelPedidoDto.setRazonCancela(items[0]);
-                                break;
-                            case 2:
-                                cancelPedidoDto.setRazonCancela(items[1]);
-                                break;
-                            case 3:
-                                cancelPedidoDto.setRazonCancela(items[2]);
-                                break;
-                        }
-                    }
-                });
-
-        builder.show();
-    }
-
-    private void enviarCancelarEmergencia(CancelPedidoDto cancelPedidoDto) {
-        Log.e("antes de execute:",":)");
-
-        Log.e("despues de ","execute");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
     @Override
     protected void onStop() {
+
         finish();
         super.onStop();
     }
@@ -301,6 +239,7 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
 
+        database.goOffline();
         super.onDestroy();
     }
 

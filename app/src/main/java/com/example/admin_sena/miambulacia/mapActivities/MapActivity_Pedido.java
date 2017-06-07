@@ -9,12 +9,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -29,7 +30,7 @@ import android.widget.Toast;
 
 import com.example.admin_sena.miambulacia.BDPedidos;
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
-import com.example.admin_sena.miambulacia.HistorialActivity;
+import com.example.admin_sena.miambulacia.actividades.HistorialActivity;
 import com.example.admin_sena.miambulacia.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -41,7 +42,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.firebase.database.DataSnapshot;
@@ -86,6 +86,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     int menorDistancia;
 
     BDPedidos baseDatosPedidos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -108,15 +109,12 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("");
 
-        baseDatosPedidos = new BDPedidos(MapActivity_Pedido.this,"My BaseDatos",null, 1);
-        Log.e("nombre DB: ",baseDatosPedidos.getDatabaseName());
-        Log.e("PATH DB: ", getApplicationContext().getDatabasePath(baseDatosPedidos.getDatabaseName()).getPath());
-
+        baseDatosPedidos = new BDPedidos(MapActivity_Pedido.this, "My BaseDatos", null, 1);
         sdf = new SimpleDateFormat("yyyy:MM:dd_HH:mm:ss", Locale.US);
 
-        SQLiteDatabase db1 = baseDatosPedidos.getWritableDatabase();
+        //SQLiteDatabase db1 = baseDatosPedidos.getWritableDatabase();
 
-        db1.close();
+        //db1.close();
 
         distancias = new ArrayList<>();
         ambuLocations = new ArrayList<>();
@@ -212,17 +210,20 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                         ubicacionPaciente.setFecha(date);
                         ubicacionPaciente.setIdAmbulancia(idAmbulancia);
 
+                        Log.e("FechaPedido", ubicacionPaciente.getFecha());
+                        Log.e("IdAmbulancia", ubicacionPaciente.getIdAmbulancia());
+
                         reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente);
                         reference.child("Ambulancias").child(idAmbulancia).child("Pedido").child("aceptado").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                Log.e("data key: ",dataSnapshot.getKey());
+                                Log.e("data key: ", dataSnapshot.getKey());
 
                                 try {
-                                    boolean aceptado = (boolean)dataSnapshot.getValue();
-                                    Log.e("boolean: ",String.valueOf(dataSnapshot.getValue()));
-                                    if (aceptado){ //aceptado es True
-                                        database.getReference("RegistrosAmbulancias/"+idAmbulancia+"/Pedidos/"+ubicacionPaciente.getIdPaciente()).setValue(true);
+                                    boolean aceptado = (boolean) dataSnapshot.getValue();
+                                    Log.e("boolean: ", String.valueOf(dataSnapshot.getValue()));
+                                    if (aceptado) { //aceptado es True
+                                        database.getReference("RegistrosAmbulancias/" + idAmbulancia + "/Pedidos/" + ubicacionPaciente.getIdPaciente()).setValue(true);
                                         //primer tiempo para medicion
                                         currentDateandTime = sdf.format(new Date());
                                         reference.child("Pedidos").child("Pedido:" + ubicacionPaciente.getIdPaciente()).child("tiempos").child("2").setValue(currentDateandTime);
@@ -231,7 +232,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                                         //pasar a seguimiento:
                                         irAseguimiento();
                                     }
-                                }catch (NullPointerException e){
+                                } catch (NullPointerException e) {
 
                                     Log.e("No se ha aceptado", "la emergencia");
                                 }
@@ -263,8 +264,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         reference.child("Ambulancias").child(idAmbulancia).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                latAmbu[0] = (double)snapshot.child("latitud").getValue();
-                lonAmbu[0] = (double)snapshot.child("longitud").getValue();
+                latAmbu[0] = (double) snapshot.child("latitud").getValue();
+                lonAmbu[0] = (double) snapshot.child("longitud").getValue();
             }
 
             @Override
@@ -280,7 +281,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         i.putExtra("IdAmbulancia", idAmbulancia);
 
         //Log.e("Idambulanciarecibido", outputtojson.getCedula());
-        i.putExtra("ab",ubicacionPaciente);
+        i.putExtra("ab", ubicacionPaciente);
         startActivity(i);
     }
 
@@ -295,26 +296,31 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     }
 
-
     private void recuperarAmbulancias() {
         Query consulta = reference.child("Ambulancias").orderByKey();
 
-            consulta.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.getValue() != null){
-                        Log.e("la consulta es", " exitosa");
-                        compararDistancias(dataSnapshot);
-                        mostrarDialogo2();
-                    }else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity_Pedido.this);
-                        builder.setIcon(R.mipmap.ic_launcher)
-                                .setCancelable(false)
-                                .setTitle("No hay ambulancias disponibles")
-                                .setPositiveButton("Llamar al CRUE", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
+        consulta.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() != null) {
+                    Log.e("la consulta es", " exitosa");
+                    compararDistancias(dataSnapshot);
+                    mostrarDialogo2();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity_Pedido.this);
+                    builder.setIcon(R.mipmap.ic_launcher)
+                            .setCancelable(false)
+                            .setTitle("No hay ambulancias disponibles")
+                            .setPositiveButton("¿Llamar al CRUE?", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    Intent llamarCrue = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "3136302690"));
+                                    if (ActivityCompat.checkSelfPermission(MapActivity_Pedido.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+
+                                        startActivity(llamarCrue);
+                                    }
+
                                     }
                                 })
                                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -326,19 +332,13 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                         builder.create();
                         builder.show();
                         Log.e("la consulta es", " nula");
-
                     }
-
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
             });
-
-
-
-
     }
 
     private void compararDistancias(DataSnapshot dataSnapshot) {
@@ -408,16 +408,16 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(MapActivity_Pedido.this, "Conexion con api places FAILED", Toast.LENGTH_SHORT).show();
     }
 
     ///Dialogo para validar envio de emergencia
-    public class CustomDialog extends Dialog {
+    private class CustomDialog extends Dialog {
         Button SiEnviar, btnsalir;
         Activity mActivity;
 
-        public CustomDialog(Activity activity) {
+        CustomDialog(Activity activity) {
             super(activity);
             mActivity = activity;
             setContentView(R.layout.activity_dialogo_enviar_emergencia);
@@ -452,17 +452,13 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         mMap.setMyLocationEnabled(true);
     }
 
-    //metodo para crear marcadores
     public void CrearMarcador(Location location, String Titulo)
     {
-
         //reference.child("Pedidos").child("Pedido" + ubicacionPaciente.getIdPaciente()).setValue(ubicacionPaciente.getIdPaciente());
         mMap.clear();
-        Marker marcador = mMap.addMarker(new MarkerOptions()
+        mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
                 .title(Titulo).icon(BitmapDescriptorFactory.fromResource(R.drawable.user)));
-
-
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15.0f));
@@ -488,13 +484,14 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     @Override
     protected void onDestroy() {
         mGoogleApiClient.disconnect();
+        database.goOffline();
         super.onDestroy();
     }
 
     @Override
     protected void onStop() {
-        super.onStop();
-        mGoogleApiClient.disconnect();
-    }
 
+        super.onStop();
+
+    }
 }

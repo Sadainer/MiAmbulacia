@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
+import com.example.admin_sena.miambulacia.actividades.HistorialActivity;
 
 import java.util.ArrayList;
 

@@ -72,4 +72,11 @@ public class UbicacionPacienteDto implements Serializable {
         Longitud = longitud;
     }
 
+    public String getFecha() {
+        return Fecha;
+    }
+
+    public String getIdAmbulancia() {
+        return idAmbulancia;
+    }
 }
