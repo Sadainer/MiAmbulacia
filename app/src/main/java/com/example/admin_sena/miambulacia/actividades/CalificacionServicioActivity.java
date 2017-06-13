@@ -20,6 +20,7 @@ public class CalificacionServicioActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference reference;
     String IdPedido;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +64,7 @@ public class CalificacionServicioActivity extends AppCompatActivity {
 
     private void volver() {
 
-        Intent intent = new Intent(CalificacionServicioActivity.this, MapActivity_Pedido.class);
+        Intent intent = new Intent(CalificacionServicioActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
     }

@@ -72,7 +72,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     Context cnt;
     UbicacionPacienteDto ubicacionPaciente;
     FirebaseDatabase database;
-    DatabaseReference reference;
+    DatabaseReference reference, currentEmergency;
     ArrayList<String> keysAmbulancias;
     ArrayList<Location> ambuLocations;
     ArrayList<Float> distancias;
@@ -85,6 +85,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     ProgressDialog progress;
     int menorDistancia;
 
+    double latPedidoAnterior = currentEmergency.child("latitud");
+    double lngPedidoAnterior = currentEmergency.child("longitud");
     BDPedidos baseDatosPedidos;
 
     @Override
@@ -108,6 +110,9 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         }
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("");
+
+
+        currentEmergency = reference.child("CurrentEmergency");
 
         baseDatosPedidos = new BDPedidos(MapActivity_Pedido.this, "My BaseDatos", null, 1);
         sdf = new SimpleDateFormat("yyyy:MM:dd_HH:mm:ss", Locale.US);
@@ -188,6 +193,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     }
 
     private void mostrarDialogo2() {
+
         CustomDialog dialog = new CustomDialog(MapActivity_Pedido.this);
         dialog.show();
         dialog.setTitle("Enviar Emergencia?");
@@ -440,6 +446,13 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
             });
 
         }
+    }
+
+    private boolean pedidoCerca(){
+
+        boolean pedidoEstaCerca;
+
+        return pedidoEstaCerca;
     }
 
     @Override
