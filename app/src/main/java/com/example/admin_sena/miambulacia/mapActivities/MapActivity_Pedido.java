@@ -85,8 +85,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     ProgressDialog progress;
     int menorDistancia;
 
-    double latPedidoAnterior = currentEmergency.child("latitud");
-    double lngPedidoAnterior = currentEmergency.child("longitud");
+    double latPedidoAnterior;
+    double lngPedidoAnterior;
     BDPedidos baseDatosPedidos;
 
     @Override
@@ -111,9 +111,11 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("");
 
+        latPedidoAnterior = 0;
+        lngPedidoAnterior = 0;
 
         currentEmergency = reference.child("CurrentEmergency");
-
+        initPedidoCerca();
         baseDatosPedidos = new BDPedidos(MapActivity_Pedido.this, "My BaseDatos", null, 1);
         sdf = new SimpleDateFormat("yyyy:MM:dd_HH:mm:ss", Locale.US);
 
@@ -182,8 +184,19 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                 //Validar Numero de pacientes
                 else if (rGrpNumPacientes.getCheckedRadioButtonId() == -1) {
                     escoja_num_pacientes.show();
-                } else {
-                    recuperarAmbulancias();
+                } else {        //////preguntar si en esa posicion se realizo un pedido
+                    if (((latPedidoAnterior != 0) && (lngPedidoAnterior != 0)) ){
+
+                        Toast.makeText(MapActivity_Pedido.this, "Ya se realizó una solicitud a esta ubicación.", Toast.LENGTH_SHORT).show();
+                    }else if (pedidoCerca()){
+
+                        Toast.makeText(MapActivity_Pedido.this, "Ya se realizó una solicitud a esta ubicación.", Toast.LENGTH_SHORT).show();
+
+                    }else {
+
+                        recuperarAmbulancias();
+                    }
+
                 }
 
             }
@@ -240,6 +253,7 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                                     }
                                 } catch (NullPointerException e) {
 
+                                    progress.dismiss();
                                     Log.e("No se ha aceptado", "la emergencia");
                                 }
 
@@ -265,6 +279,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
     }
 
     private void irAseguimiento() {
+        currentEmergency.child("latitud").setValue(ubicacionPaciente.getLatitud());
+        currentEmergency.child("longitud").setValue(ubicacionPaciente.getLongitud());
         final double[] latAmbu = new double[1];
         final double[] lonAmbu = new double[1];
         reference.child("Ambulancias").child(idAmbulancia).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -450,7 +466,25 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
 
     private boolean pedidoCerca(){
 
-        boolean pedidoEstaCerca;
+        boolean pedidoEstaCerca = false;
+        if ((latPedidoAnterior != 0) && (lngPedidoAnterior != 0)){
+            // comparar distancia con mi posicion actual
+            Location oldLocation = new Location(LOCATION_SERVICE);
+            Location MyLocation = new Location(LOCATION_SERVICE);
+            oldLocation.setLatitude(latPedidoAnterior);
+            oldLocation.setLongitude(lngPedidoAnterior);
+            MyLocation.setLatitude(ubicacionPaciente.getLatitud());
+            MyLocation.setLongitude(ubicacionPaciente.getLongitud());
+
+            float radio = MyLocation.distanceTo(oldLocation);
+            Log.e("Radio", String.valueOf(radio));
+            if (!(radio < 100.0)){
+                pedidoEstaCerca = true;
+            }
+
+        }else {
+            pedidoEstaCerca = false;
+        }
 
         return pedidoEstaCerca;
     }
@@ -494,6 +528,47 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
         }
     }
 
+    private void initPedidoCerca(){
+
+        Log.e("initPedidocerca","insideMetodo");
+        currentEmergency.child("latitud").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                if (dataSnapshot.getValue() != null){
+
+                    latPedidoAnterior = (double)dataSnapshot.getValue();
+                    Log.e("LngPedidoAnterior", String.valueOf(lngPedidoAnterior));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        currentEmergency.child("longitud").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                if (dataSnapshot.getValue() != null){
+
+                    Log.e("lat snapshot", String.valueOf(dataSnapshot.getValue()));
+                    lngPedidoAnterior = (double)dataSnapshot.getValue();
+                    Log.e("LatPedidoAnterior", String.valueOf(latPedidoAnterior));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
     @Override
     protected void onDestroy() {
         mGoogleApiClient.disconnect();
