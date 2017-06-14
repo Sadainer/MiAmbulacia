@@ -2,6 +2,7 @@ package com.example.admin_sena.miambulacia.actividades;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.admin_sena.miambulacia.Dto.UbicacionPacienteDto;
 import com.example.admin_sena.miambulacia.HistorialAdapter;
@@ -35,71 +37,75 @@ public class HistorialActivity extends AppCompatActivity {
         setContentView(R.layout.activity_historial);
 
         tvDataBaseVacia =(TextView)findViewById(R.id.tvDataBaseVacia);
-
+        tvDataBaseVacia.setText("No existen registros.");
         //Si no hay elementos en el historial (nunca se ha hecho un pedido)
 
         miLista = new ArrayList<UbicacionPacienteDto>();
 
         Log.e("Path ", getApplicationContext().getDatabasePath("My BaseDatos").getPath());
 
-       db = SQLiteDatabase.openDatabase(getApplicationContext().getDatabasePath("My BaseDatos").getPath(),null,SQLiteDatabase.OPEN_READWRITE);
-        ///data/data/com.example.admin_sena.miambulacia/databases/My BaseDatos
-        //Comprobar si la tabla esta vacia
-        String count = "SELECT COUNT(*) FROM TablaPedidos";
-        Cursor mcursor = db.rawQuery(count, null);
+        try{
+            db = SQLiteDatabase.openDatabase(getApplicationContext().getDatabasePath("My BaseDatos").getPath(),null,SQLiteDatabase.OPEN_READWRITE);
+///data/data/com.example.admin_sena.miambulacia/databases/My BaseDatos
+            //Comprobar si la tabla esta vacia
+            String count = "SELECT COUNT(*) FROM TablaPedidos";
+            Cursor mcursor = db.rawQuery(count, null);
 
-        mcursor.moveToFirst();
-        int icount = mcursor.getInt(0);
-        if(icount>0){
-            //La tabla existe y contiene registros
-           tvDataBaseVacia.setVisibility(View.INVISIBLE);
-            Log.i("tabla","llena");
+            mcursor.moveToFirst();
+            int icount = mcursor.getInt(0);
+            if(icount>0){
+                //La tabla existe y contiene registros
+                tvDataBaseVacia.setVisibility(View.INVISIBLE);
+                Log.i("tabla","llena");
 
                 Log.e("Entro al ","if");
                 //Recorremos el cursor hasta que no haya más registros
                 do {
                     Log.e("Entro al ","do");
-                   // Log.e("json:",mcursor.getString(2));
+                    // Log.e("json:",mcursor.getString(2));
                 } while(mcursor.moveToNext());
-            String[] campos = new String[] {"Pedidos"};
-            mcursor = db.query("TablaPedidos", campos, null, null, null, null, null);
-            Log.e("TmañoCursorColumnas", String.valueOf(mcursor.getColumnCount()));
+                String[] campos = new String[] {"Pedidos"};
+                mcursor = db.query("TablaPedidos", campos, null, null, null, null, null);
+                Log.e("TmañoCursorColumnas", String.valueOf(mcursor.getColumnCount()));
 
-            Log.e("TmañoCursorFilas", String.valueOf(mcursor.getCount()));
+                Log.e("TmañoCursorFilas", String.valueOf(mcursor.getCount()));
 
-            mcursor.moveToFirst();
-            do {
+                mcursor.moveToFirst();
+                do {
 
-                Log.e("json:",mcursor.getString(0));
-               UbicacionPacienteDto dto = json.fromJson(mcursor.getString(0), UbicacionPacienteDto.class);
-                Log.e("Funcionando","DTO");
-                miLista.add(dto);
+                    Log.e("json:",mcursor.getString(0));
+                    UbicacionPacienteDto dto = json.fromJson(mcursor.getString(0), UbicacionPacienteDto.class);
+                    Log.e("Funcionando","DTO");
+                    miLista.add(dto);
 
-            } while(mcursor.moveToNext());
+                } while(mcursor.moveToNext());
 
 
-            mcursor.close();
+                mcursor.close();
+                db.close();
+
+
+                historialRecycler = (RecyclerView)findViewById(R.id.rvHistorial);
+                historialRecycler.setHasFixedSize(true);
+
+                HistorialAdapter historialAdapter =new HistorialAdapter(miLista, this);
+                historialRecycler.setAdapter(historialAdapter);
+
+                historialRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+            }
+
+            else{
+                tvDataBaseVacia.setVisibility(View.VISIBLE);
+                tvDataBaseVacia.setText("No has realizado ningun pedido aún :)");
+
+                Log.i("tabla","vacia");
+                //tabla vacia
+            }
             db.close();
-
-
-            historialRecycler = (RecyclerView)findViewById(R.id.rvHistorial);
-            historialRecycler.setHasFixedSize(true);
-
-            HistorialAdapter historialAdapter =new HistorialAdapter(miLista, this);
-            historialRecycler.setAdapter(historialAdapter);
-
-            historialRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+            mcursor.close();
+        }catch(SQLiteCantOpenDatabaseException e){
+            Toast.makeText(this, "No existen Pedidos.", Toast.LENGTH_SHORT).show();
         }
-
-        else{
-            tvDataBaseVacia.setVisibility(View.VISIBLE);
-            tvDataBaseVacia.setText("No has realizado ningun pedido aún :)");
-
-            Log.i("tabla","vacia");
-            //tabla vacia
-        }
-        db.close();
-        mcursor.close();
     }
 
     @Override

@@ -32,6 +32,7 @@ public class CalificacionServicioActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("Pedidos/"+"Pedido:"+IdPedido);
 
+        reference.child("Calification").setValue(calificacion);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {

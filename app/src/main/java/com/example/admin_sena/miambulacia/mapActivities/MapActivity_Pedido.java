@@ -253,11 +253,8 @@ public class MapActivity_Pedido extends AppCompatActivity implements OnMapReadyC
                                     }
                                 } catch (NullPointerException e) {
 
-                                    progress.dismiss();
                                     Log.e("No se ha aceptado", "la emergencia");
                                 }
-
-
                             }
 
                             @Override

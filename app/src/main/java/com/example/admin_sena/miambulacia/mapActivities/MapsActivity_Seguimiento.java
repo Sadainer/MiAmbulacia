@@ -194,7 +194,7 @@ public class MapsActivity_Seguimiento extends AppCompatActivity implements
                         //
                         float distancia = mylocation.distanceTo(ambuLocation);
                         Log.e("distancia ", String.valueOf(distancia));
-                        if (distancia < 20.0){
+                        if (distancia < 70.0){
                             timer.cancel();
                             timerTask.cancel();
                             //primer tiempo para medicion
